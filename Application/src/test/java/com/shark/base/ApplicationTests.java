@@ -2,7 +2,9 @@ package com.shark.base;
 
 
 
+import com.shark.base.helper.LoginHelper;
 import com.shark.base.scenario.rest.RestGetScenario;
+import com.shark.base.scenario.rest.UpdateNameScenario;
 import com.shark.base.test.listener.TestEventListener;
 import com.shark.base.test.worker.ITestWorker;
 import com.shark.base.test.worker.MockWorker;
@@ -29,17 +31,37 @@ public class ApplicationTests implements TestEventListener {
 
 	private ITestWorker worker;
 
+	private String authHeaderParameter;
+
 	@Before
 	public void setUp() throws Exception {
 		worker = new MockWorker(mockMvc);
+		LoginHelper loginHelper = new LoginHelper(worker);
+		authHeaderParameter = loginHelper.login();
 	}
 
+	@Test
+	public void testContext() throws Exception {
 
-    @Test
-    public void test() throws Exception {
-		RestGetScenario scenario = new RestGetScenario(this, worker, true);
-        scenario.start();
-    }
+	}
+
+//    @Test
+//    public void testRegister() throws Exception {
+//		RegisterScenario scenario = new RegisterScenario(this, worker, true);
+//        scenario.start();
+//    }
+
+//    @Test
+//    public void testLogin() throws Exception {
+//        LoginScenario scenario = new LoginScenario(this, worker, true);
+//        scenario.start();
+//    }
+
+	@Test
+	public void testUpdateName() throws Exception {
+		UpdateNameScenario scenario = new UpdateNameScenario(this, worker, true, authHeaderParameter);
+		scenario.start();
+	}
 
 	@Override
 	public void success() {

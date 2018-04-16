@@ -4,7 +4,10 @@ import com.shark.base.exception.ResponseException;
 
 public abstract class BaseService<Parameters, DataAccessParameters, DataAccessObject, Result> {
 
-    public Result request(Parameters parameters) {
+    protected String memberId;
+
+    public Result request(String memberId, Parameters parameters) {
+        this.memberId = memberId;
         try {
             checkParameters(parameters);
         } catch (Exception e) {
