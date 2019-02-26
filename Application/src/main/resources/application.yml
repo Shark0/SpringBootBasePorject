@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: WantSyncCenter
+  profiles:
+    active: #spring.profiles.active#
+server:
+  port: 8081
+swagger:
+  basePackage: com.shark.application
+---
+debug: false
+spring:
+  profiles: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: com.shark.application.config.jpa.PhysicalNamingStrategyImpl
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/Base?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false
+    username: root
+    password: root
