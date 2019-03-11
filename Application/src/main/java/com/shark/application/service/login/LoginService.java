@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import com.shark.application.dto.ResponseDataEntity;
 import com.shark.application.dto.login.LoginDtoEntity;
 import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.mysql.account.AccountRepository;
-import com.shark.application.repository.mysql.account.dao.AccountDaoEntity;
-import com.shark.application.config.security.SecurityConfiguration;
-import com.shark.application.service.BaseStringFromResponseDataService;
+import com.shark.application.repository.account.AccountRepository;
+import com.shark.application.repository.account.dao.AccountDaoEntity;
+import com.shark.application.configuration.security.SecurityConfiguration;
+import com.shark.application.service.BaseQueryDataService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class LoginService extends BaseStringFromResponseDataService<AccountDaoEntity, LoginDtoEntity> {
+public class LoginService extends BaseQueryDataService<AccountDaoEntity, LoginDtoEntity> {
 
 
     public static final String INPUT_ACCOUNT = "account";

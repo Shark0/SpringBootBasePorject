@@ -1,24 +1,24 @@
 package com.shark.application.service.login;
 
+import com.google.common.collect.Lists;
+import com.shark.application.configuration.security.SecurityConfiguration;
 import com.shark.application.dto.ResponseDataEntity;
 import com.shark.application.dto.login.LoginDtoEntity;
 import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.mysql.account.AccountRepository;
-import com.shark.application.repository.mysql.account.dao.AccountDaoEntity;
-import com.shark.application.config.security.SecurityConfiguration;
-import com.shark.application.service.BaseStringFromResponseDataService;
+import com.shark.application.repository.account.AccountRepository;
+import com.shark.application.repository.account.dao.AccountDaoEntity;
+import com.shark.application.service.BaseQueryDataService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class RegisterService extends BaseStringFromResponseDataService<AccountDaoEntity, LoginDtoEntity> {
+public class RegisterService extends BaseQueryDataService<AccountDaoEntity, LoginDtoEntity> {
 
     public static final String INPUT_ACCOUNT = "account";
     public static final String INPUT_PASSWORD = "password";
@@ -29,11 +29,7 @@ public class RegisterService extends BaseStringFromResponseDataService<AccountDa
 
     @Override
     protected List<String> generateCheckKeyList() {
-        List<String> list = new ArrayList<>();
-        list.add(INPUT_ACCOUNT);
-        list.add(INPUT_PASSWORD);
-        list.add(INPUT_NAME);
-        return list;
+        return Lists.newArrayList(INPUT_NAME, INPUT_ACCOUNT, INPUT_PASSWORD);
     }
 
     @Override

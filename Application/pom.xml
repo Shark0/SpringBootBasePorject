@@ -41,10 +41,12 @@
             <artifactId>Base</artifactId>
         </dependency>
         <!--mybatis-->
+        <!--
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
+        -->
         <!--MySQL-->
         <dependency>
             <groupId>mysql</groupId>
