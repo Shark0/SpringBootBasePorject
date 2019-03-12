@@ -10,8 +10,6 @@ public class LoginDtoEntity implements Serializable {
 
     @ApiModelProperty(value = "Json Web Token")
     private String jwt;
-    @ApiModelProperty(value = "使用者 ID")
-    private long accountId;
     @ApiModelProperty(value = "使用者名稱")
     private String accountName;
 
@@ -21,14 +19,6 @@ public class LoginDtoEntity implements Serializable {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
     }
 
     public String getAccountName() {
