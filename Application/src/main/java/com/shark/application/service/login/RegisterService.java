@@ -54,7 +54,6 @@ public class RegisterService extends BaseQueryDataService<AccountDaoEntity, Logi
     protected ResponseDataEntity<LoginDtoEntity> generateResultData(AccountDaoEntity accountDaoEntity) {
         ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
-        memberDtoEntity.setAccountId(accountDaoEntity.getId());
         memberDtoEntity.setAccountName(accountDaoEntity.getAccount());
         String jwt = SecurityConfiguration.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(accountId)
