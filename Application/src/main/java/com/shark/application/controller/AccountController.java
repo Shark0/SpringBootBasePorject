@@ -85,9 +85,9 @@ public class AccountController {
 
     @ApiOperation(value = "取得帳號選單列表", notes = "", produces = "application/json")
     @GetMapping("/getAccountMenuList")
-    public ResponseDataEntity<List<MenuDtoEntity>> searchAccountMenuList(HttpServletRequest request) {
+    public ResponseDataEntity<List<MenuDtoEntity>> getAccountMenuList(HttpServletRequest request) {
         HashMap<String, String> parameters =
-                ServletUtil.generateServiceParameters(request, getClass(), "searchAccountMenuList", false);
+                ServletUtil.generateServiceParameters(request, getClass(), "getAccountMenuList", false);
         Principal principal = request.getUserPrincipal();
         String accountId = principal.getName();
         return getAccountMenuListService.request(accountId, parameters);
