@@ -3,10 +3,7 @@ package com.shark.application.controller;
 import com.shark.application.dto.ResponseDataEntity;
 import com.shark.application.dto.ResponseEntity;
 import com.shark.application.repository.permission.dao.PermissionDaoEntity;
-import com.shark.application.service.permission.AddPermissionService;
-import com.shark.application.service.permission.DeletePermissionService;
-import com.shark.application.service.permission.EditPermissionService;
-import com.shark.application.service.permission.GetPermissionListService;
+import com.shark.application.service.permission.*;
 import com.shark.application.util.ServletUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -95,6 +92,23 @@ public class PermissionController {
         Principal principal = request.getUserPrincipal();
         String memberId = principal.getName();
         return getPermissionListService.request(memberId, parameters);
+    }
+
+    @Autowired
+    private GetPermissionService getPermissionService;
+
+    @ApiOperation(value = "取得權限", notes = "", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = GetPermissionService.INPUT_ID, value = "權限ID", required = true, paramType = "query")
+    })
+    @GetMapping("/getPermission")
+    @PreAuthorize("hasAuthority('permission')")
+    public ResponseDataEntity<PermissionDaoEntity> getPermission(HttpServletRequest request) {
+        HashMap<String, String> parameters =
+                ServletUtil.generateServiceParameters(request, getClass(), "getPermission", false);
+        Principal principal = request.getUserPrincipal();
+        String memberId = principal.getName();
+        return getPermissionService.request(memberId, parameters);
     }
 
 }
