@@ -40,7 +40,7 @@ public class EditPermissionService extends BaseResponseService {
         }
         String code = parameters.get(INPUT_CODE);
         if(!StringUtil.isEmpty(code)) {
-            permissionDaoEntity.setName(code);
+            permissionDaoEntity.setCode(code);
         }
         permissionRepository.save(permissionDaoEntity);
         return null;

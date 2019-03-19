@@ -47,7 +47,7 @@ public class PermissionController {
     @Autowired
     private DeletePermissionService deletePermissionService;
 
-    @ApiOperation(value = "刪除權限", notes = "", produces = "application/json")
+    @ApiOperation(value = "刪除權限", notes = "-1：權限跟角色榜定，請先刪除榜定", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(name = DeletePermissionService.INPUT_ID, value = "權限ID", required = true, paramType = "query")
     })

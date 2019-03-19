@@ -20,7 +20,7 @@ public abstract class BaseResponseService extends BaseService<HashMap<String, St
         for(String key: checkKeyList) {
             String parameter = parameters.get(key);
             if(StringUtil.isEmpty(parameter)) {
-                throw new Exception("Need " + key + " parameter");
+                throw new Exception("需要 " + key + " 參數ㄋ");
             }
         }
     }
@@ -40,7 +40,7 @@ public abstract class BaseResponseService extends BaseService<HashMap<String, St
     protected ResponseEntity handleResponseException(ResponseException e) {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setReturnCode(e.getReturnCode());
-        responseEntity.setReturnMessage(e.getMessage());
+        responseEntity.setReturnMessage(e.getReturnMessage());
         return responseEntity;
     }
 
