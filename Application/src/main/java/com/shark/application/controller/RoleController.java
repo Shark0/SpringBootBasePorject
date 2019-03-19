@@ -2,6 +2,7 @@ package com.shark.application.controller;
 
 import com.shark.application.dto.ResponseDataEntity;
 import com.shark.application.dto.ResponseEntity;
+import com.shark.application.dto.role.RolePermissionDtoEntity;
 import com.shark.application.repository.role.dao.RoleDaoEntity;
 import com.shark.application.service.role.*;
 import com.shark.application.util.ServletUtil;
@@ -48,7 +49,8 @@ public class RoleController {
     private AddRoleService addRoleService;
     @ApiOperation(value = "新增角色", notes = "", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = AddRoleService.INPUT_NAME, value = "角色名稱", required = true, paramType = "query")
+            @ApiImplicitParam(name = AddRoleService.INPUT_NAME, value = "角色名稱", required = true, paramType = "query"),
+            @ApiImplicitParam(name = AddRoleService.INPUT_PERMISSION_ID_LIST_JSON, value = "角色權限ID列表Json", required = false, paramType = "query")
     })
     @PostMapping("/addRole")
     @PreAuthorize("hasAuthority('role')")
@@ -114,6 +116,7 @@ public class RoleController {
 
     @Autowired
     private GetRoleListService getRoleListService;
+
     @ApiOperation(value = "取得角色列表", notes = "", produces = "application/json")
     @GetMapping(value = "/getRoleList")
     @PreAuthorize("hasAuthority('role')")
@@ -126,19 +129,36 @@ public class RoleController {
     }
 
     @Autowired
-    private SearchRolePermissionListService searchRolePermissionListService;
+    private GetRoleService getRoleService;
+
+    @ApiOperation(value = "取得角色", notes = "", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = GetRoleService.INPUT_ID, value = "角色id", required = true, paramType = "query"),
+    })
+    @GetMapping(value = "/getRole")
+    @PreAuthorize("hasAuthority('role')")
+    public ResponseDataEntity<RoleDaoEntity> getRole(HttpServletRequest request) {
+        HashMap<String, String> parameters =
+                ServletUtil.generateServiceParameters(request, getClass(), "getRole", false);
+        Principal principal = request.getUserPrincipal();
+        String memberId = principal.getName();
+        return getRoleService.request(memberId, parameters);
+    }
+
+    @Autowired
+    private GetRolePermissionListService getRolePermissionListService;
 
     @ApiOperation(value = "搜尋角色權限列表", notes = "", produces = "application/json")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = SearchRolePermissionListService.INPUT_ROLE_ID, value = "角色id", required = true, paramType = "query")
+            @ApiImplicitParam(name = GetRolePermissionListService.INPUT_ROLE_ID, value = "角色id", required = true, paramType = "query")
     })
-    @PostMapping("/searchRolePermission")
+    @GetMapping("/getRolePermissionList")
     @PreAuthorize("hasAuthority('role')")
-    public ResponseEntity searchRolePermission(HttpServletRequest request) {
+    public ResponseDataEntity<List<RolePermissionDtoEntity>> getRolePermissionList(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
         String memberId = principal.getName();
         HashMap<String, String> parameters =
-                ServletUtil.generateServiceParameters(request, getClass(), "searchRolePermission", false);
-        return searchRolePermissionListService.request(memberId, parameters);
+                ServletUtil.generateServiceParameters(request, getClass(), "getRolePermissionList", false);
+        return getRolePermissionListService.request(memberId, parameters);
     }
 }
