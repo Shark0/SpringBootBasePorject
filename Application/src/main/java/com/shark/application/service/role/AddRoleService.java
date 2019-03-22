@@ -48,7 +48,6 @@ public class AddRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoE
         Long roleId = roleDaoEntity.getId();
         if(!StringUtil.isEmpty(permissionIdListJson)) {
             Gson gson = new Gson();
-            System.out.println("permissionIdListJson: " + permissionIdListJson);
             List<Long> permissionIdList = gson.fromJson(permissionIdListJson, new TypeToken<List<Long>>(){}.getType());
             for(Long permissionId: permissionIdList) {
                 PermissionDaoEntity permissionDaoEntity = permissionRepository.findOne(permissionId);

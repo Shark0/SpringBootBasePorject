@@ -18,4 +18,18 @@ public interface MenuRepository extends JpaRepository<MenuDaoEntity, Long> {
             "))"
             , nativeQuery = true)
     List<MenuDaoEntity> findByAccountId(String accountId);
+
+    @Query(value = "select * " +
+            "from MENU " +
+            "where MENU.ID = ?1 or " +
+            "MENU.PARENT_ID = ?1"
+            , nativeQuery = true)
+    List<MenuDaoEntity> findById(Long id);
+
+    @Query(value = "select * " +
+            "from MENU " +
+            "where MENU.PARENT_ID = 0 " +
+            "order by MENU.SORT"
+            , nativeQuery = true)
+    List<MenuDaoEntity> findMainMenu();
 }

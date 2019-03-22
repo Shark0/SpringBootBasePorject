@@ -7,6 +7,7 @@ import com.shark.application.repository.menu.dao.MenuDaoEntity;
 import com.shark.application.service.BaseResponseService;
 import com.shark.application.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class EditMenuService extends BaseResponseService {
         String iconUrl = parameters.get(INPUT_ICON_URL);
         String path = parameters.get(INPUT_PATH);
         String parentId = parameters.get(INPUT_PARENT_ID);
-        String order = parameters.get(INPUT_SORT);
+        String sort = parameters.get(INPUT_SORT);
         MenuDaoEntity menuDaoEntity = menuRepository.findOne(Long.valueOf(id));
         if(menuDaoEntity == null) {
             throw new ResponseException(-1, "Menu is not exist");
@@ -59,8 +60,8 @@ public class EditMenuService extends BaseResponseService {
         if(!StringUtil.isEmpty(parentId)) {
             menuDaoEntity.setParentId(Long.valueOf(parentId));
         }
-        if(!StringUtil.isEmpty(order)) {
-            menuDaoEntity.setSort(Integer.valueOf(order));
+        if(!StringUtil.isEmpty(sort)) {
+            menuDaoEntity.setSort(Double.valueOf(sort));
         }
         menuRepository.save(menuDaoEntity);
         return null;
