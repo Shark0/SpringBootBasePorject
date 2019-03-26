@@ -59,7 +59,7 @@ public class LoginService extends BaseQueryDataService<AccountDaoEntity, LoginDt
     protected ResponseDataEntity<LoginDtoEntity> generateResultData(AccountDaoEntity accountDaoEntity) {
         ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
-        memberDtoEntity.setAccountName(accountDaoEntity.getAccount());
+        memberDtoEntity.setAccountName(accountDaoEntity.getName());
         String jwt = SecurityConfiguration.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(accountId)
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.JWT_EXPIRATION_TIME))

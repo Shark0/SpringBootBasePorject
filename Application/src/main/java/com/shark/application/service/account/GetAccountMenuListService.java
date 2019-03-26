@@ -6,6 +6,7 @@ import com.shark.application.dto.menu.MenuDtoEntity;
 import com.shark.application.repository.menu.MenuRepository;
 import com.shark.application.repository.menu.dao.MenuDaoEntity;
 import com.shark.application.service.BaseQueryDataService;
+import com.shark.application.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +76,12 @@ public class GetAccountMenuListService extends BaseQueryDataService<List<MenuDto
         for (Long key: hashMap.keySet()) {
             MenuDtoEntity menuDtoEntity = hashMap.get(key);
             if(menuDtoEntity.getParentId() == null || menuDtoEntity.getParentId() == 0) {
-                menuDtoEntityList.add(menuDtoEntity);
+                //main menu
+                if(!StringUtil.isEmpty(menuDtoEntity.getPath()) ||
+                        (menuDtoEntity.getSubMenuList() != null && menuDtoEntity.getSubMenuList().size() > 0)) {
+                    //has path or children
+                    menuDtoEntityList.add(menuDtoEntity);
+                }
             }
         }
         //sort menu list

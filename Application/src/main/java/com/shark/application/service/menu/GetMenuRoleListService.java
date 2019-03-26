@@ -46,7 +46,6 @@ public class GetMenuRoleListService extends BaseQueryDataService<List<MenuRoleDt
             menuRoleDtoEntity.setAdd(menuRoleHashMap.get(roleDaoEntity.getId()) != null);
             menuRoleDtoEntityList.add(menuRoleDtoEntity);
         }
-
         return menuRoleDtoEntityList;
     }
 
