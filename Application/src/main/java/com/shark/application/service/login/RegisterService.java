@@ -33,7 +33,7 @@ public class RegisterService extends BaseQueryDataService<AccountDaoEntity, Logi
     }
 
     @Override
-    protected AccountDaoEntity dataAccess(HashMap<String, String> parameters) throws Exception {
+    protected AccountDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
         AccountDaoEntity accountDaoEntity = accountRepository.findByAccount(INPUT_ACCOUNT);
         if(accountDaoEntity != null) {
             ResponseException exception = new ResponseException();
@@ -46,17 +46,16 @@ public class RegisterService extends BaseQueryDataService<AccountDaoEntity, Logi
         accountDaoEntity.setPassword(parameters.get(INPUT_PASSWORD));
         accountDaoEntity.setName(parameters.get(INPUT_NAME));
         accountDaoEntity = accountRepository.save(accountDaoEntity);
-        this.accountId = String.valueOf(accountDaoEntity.getId());
         return accountDaoEntity;
     }
 
     @Override
-    protected ResponseDataEntity<LoginDtoEntity> generateResultData(AccountDaoEntity accountDaoEntity) {
+    protected ResponseDataEntity<LoginDtoEntity> generateResultData(String accountId, AccountDaoEntity accountDaoEntity) {
         ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
         memberDtoEntity.setAccountName(accountDaoEntity.getName());
         String jwt = SecurityConfiguration.TOKEN_PREFIX + Jwts.builder()
-                .setSubject(accountId)
+                .setSubject(String.valueOf(accountDaoEntity.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.JWT_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.SECRET.getBytes())
                 .compact();

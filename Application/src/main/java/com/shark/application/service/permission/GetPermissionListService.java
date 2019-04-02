@@ -22,12 +22,12 @@ public class GetPermissionListService extends BaseQueryDataService<List<Permissi
     }
 
     @Override
-    protected List<PermissionDaoEntity> dataAccess(HashMap<String, String> parameters) {
+    protected List<PermissionDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
         return permissionRepository.findAll();
     }
 
     @Override
-    protected ResponseDataEntity<List<PermissionDaoEntity>> generateResultData(List<PermissionDaoEntity> roleDaoEntityList) {
+    protected ResponseDataEntity<List<PermissionDaoEntity>> generateResultData(String accountId, List<PermissionDaoEntity> roleDaoEntityList) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(roleDaoEntityList);
         responseDataEntity.setReturnCode(1);

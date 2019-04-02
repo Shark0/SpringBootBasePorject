@@ -4,10 +4,8 @@ import com.shark.application.exception.ResponseException;
 
 public abstract class BaseService<Parameters, DataAccessParameters, DataAccessObject, Result> {
 
-    protected String accountId;
 
     public Result request(String accountId, Parameters parameters) {
-        this.accountId = accountId;
         try {
             checkParameters(parameters);
         } catch (Exception e) {
@@ -31,7 +29,7 @@ public abstract class BaseService<Parameters, DataAccessParameters, DataAccessOb
 
         DataAccessObject dataAccessObject = null;
         try {
-            dataAccessObject = dataAccess(dataAccessParameters);
+            dataAccessObject = dataAccess(accountId, dataAccessParameters);
         } catch (Exception e) {
             e.printStackTrace();
             if(e instanceof ResponseException) {
@@ -42,7 +40,7 @@ public abstract class BaseService<Parameters, DataAccessParameters, DataAccessOb
 
         Result result = null;
         try {
-            result = generateResultData(dataAccessObject);
+            result = generateResultData(accountId, dataAccessObject);
         } catch (Exception e) {
             e.printStackTrace();
             if(e instanceof ResponseException) {
@@ -57,9 +55,9 @@ public abstract class BaseService<Parameters, DataAccessParameters, DataAccessOb
 
     protected abstract DataAccessParameters parseParameters(Parameters parameters);
 
-    protected abstract DataAccessObject dataAccess(DataAccessParameters parameters) throws Exception;
+    protected abstract DataAccessObject dataAccess(String accountId, DataAccessParameters parameters) throws Exception;
 
-    protected abstract Result generateResultData(DataAccessObject dataAccessObject);
+    protected abstract Result generateResultData(String accountId, DataAccessObject dataAccessObject);
 
     protected abstract Result handleResponseException(ResponseException exception);
 

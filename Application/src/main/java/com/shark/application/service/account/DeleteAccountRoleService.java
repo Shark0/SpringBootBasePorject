@@ -27,11 +27,11 @@ public class DeleteAccountRoleService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         AccountRoleIdEntity accountRoleIdEntity = new AccountRoleIdEntity();
         accountRoleIdEntity.setAccountId(Long.valueOf(parameters.get(INPUT_ACCOUNT_ID)));
         accountRoleIdEntity.setRoleId(Long.valueOf(parameters.get(INPUT_ROLE_ID)));
-        accountRoleRepository.delete(accountRoleIdEntity);
+        accountRoleRepository.deleteById(accountRoleIdEntity);
         return null;
     }
 }

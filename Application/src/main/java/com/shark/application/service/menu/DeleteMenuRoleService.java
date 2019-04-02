@@ -26,13 +26,13 @@ public class DeleteMenuRoleService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         String menuId = parameters.get(INPUT_MENU_ID);
         String roleId = parameters.get(INPUT_ROLE_ID);
         MenuRoleIdEntity menuPermissionIdEntity = new MenuRoleIdEntity();
         menuPermissionIdEntity.setMenuId(Long.valueOf(menuId));
         menuPermissionIdEntity.setRoleId(Long.valueOf(roleId));
-        menuRoleRepository.delete(menuPermissionIdEntity);
+        menuRoleRepository.deleteById(menuPermissionIdEntity);
         return null;
     }
 }

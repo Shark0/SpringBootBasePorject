@@ -26,9 +26,9 @@ public class EditRoleService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long id = Long.valueOf(parameters.get(INPUT_ID));
-        RoleDaoEntity roleDaoEntity = roleRepository.findOne(id);
+        RoleDaoEntity roleDaoEntity = roleRepository.findById(id).get();
         if(roleDaoEntity == null) {
             throw new ResponseException(-1, "Role doesn't exist");
         }

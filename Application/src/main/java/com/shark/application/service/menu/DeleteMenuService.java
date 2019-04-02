@@ -23,9 +23,9 @@ public class DeleteMenuService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long id = Long.valueOf(parameters.get(INPUT_ID));
-        menuRepository.delete(id);
+        menuRepository.deleteById(id);
         return null;
     }
 }

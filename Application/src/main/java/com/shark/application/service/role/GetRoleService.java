@@ -25,12 +25,12 @@ public class GetRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoE
     }
 
     @Override
-    protected RoleDaoEntity dataAccess(HashMap<String, String> parameters) {
-        return roleRepository.findOne(Long.valueOf(parameters.get(INPUT_ID)));
+    protected RoleDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
+        return roleRepository.findById(Long.valueOf(parameters.get(INPUT_ID))).get();
     }
 
     @Override
-    protected ResponseDataEntity<RoleDaoEntity> generateResultData(RoleDaoEntity groupDaoEntityList) {
+    protected ResponseDataEntity<RoleDaoEntity> generateResultData(String accountId, RoleDaoEntity groupDaoEntityList) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(groupDaoEntityList);
         responseDataEntity.setReturnCode(1);

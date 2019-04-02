@@ -24,7 +24,7 @@ public interface MenuRepository extends JpaRepository<MenuDaoEntity, Long> {
             "where MENU.ID = ?1 or " +
             "MENU.PARENT_ID = ?1"
             , nativeQuery = true)
-    List<MenuDaoEntity> findById(Long id);
+    List<MenuDaoEntity> findByMenuIdOrParentId(Long id);
 
     @Query(value = "select * " +
             "from MENU " +

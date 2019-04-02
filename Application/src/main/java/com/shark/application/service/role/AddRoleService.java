@@ -39,7 +39,7 @@ public class AddRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoE
     }
 
     @Override
-    protected RoleDaoEntity dataAccess(HashMap<String, String> parameters) {
+    protected RoleDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
         RoleDaoEntity roleDaoEntity = new RoleDaoEntity();
         roleDaoEntity.setName(parameters.get(INPUT_NAME));
         roleDaoEntity = roleRepository.save(roleDaoEntity);
@@ -50,7 +50,7 @@ public class AddRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoE
             Gson gson = new Gson();
             List<Long> permissionIdList = gson.fromJson(permissionIdListJson, new TypeToken<List<Long>>(){}.getType());
             for(Long permissionId: permissionIdList) {
-                PermissionDaoEntity permissionDaoEntity = permissionRepository.findOne(permissionId);
+                PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(permissionId).get();
                 if(permissionDaoEntity != null) {
                     RolePermissionDaoEntity rolePermissionDaoEntity = new RolePermissionDaoEntity();
                     rolePermissionDaoEntity.setRoleId(roleId);
@@ -63,7 +63,7 @@ public class AddRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoE
     }
 
     @Override
-    protected ResponseDataEntity<RoleDaoEntity> generateResultData(RoleDaoEntity roleDaoEntity) {
+    protected ResponseDataEntity<RoleDaoEntity> generateResultData(String accountId, RoleDaoEntity roleDaoEntity) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(roleDaoEntity);
         responseDataEntity.setReturnCode(1);

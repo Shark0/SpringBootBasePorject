@@ -27,9 +27,9 @@ public class DeleteRoleService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long id = Long.valueOf(parameters.get(INPUT_ID));
-        roleRepository.delete(id);
+        roleRepository.deleteById(id);
         return null;
     }
 }

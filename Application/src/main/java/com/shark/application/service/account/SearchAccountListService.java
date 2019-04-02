@@ -35,7 +35,7 @@ public class SearchAccountListService extends BaseQueryDataService<PageDtoEntity
     }
 
     @Override
-    protected PageDtoEntity<AccountDaoEntity> dataAccess(HashMap<String, String> parameters) throws Exception {
+    protected PageDtoEntity<AccountDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
         String pageNumber = parameters.get(INPUT_PAGE_NUMBER);
         String pageSize = parameters.get(INPUT_PAGE_SIZE);
         if(StringUtil.isEmpty(pageSize) || "0".equalsIgnoreCase(pageSize)) {
@@ -59,7 +59,7 @@ public class SearchAccountListService extends BaseQueryDataService<PageDtoEntity
     }
 
     @Override
-    protected ResponseDataEntity<PageDtoEntity<AccountDaoEntity>> generateResultData(PageDtoEntity<AccountDaoEntity> data) {
+    protected ResponseDataEntity<PageDtoEntity<AccountDaoEntity>> generateResultData(String accountId, PageDtoEntity<AccountDaoEntity> data) {
         ResponseDataEntity<PageDtoEntity<AccountDaoEntity>> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);

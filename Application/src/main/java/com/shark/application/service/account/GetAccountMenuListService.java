@@ -26,7 +26,7 @@ public class GetAccountMenuListService extends BaseQueryDataService<List<MenuDto
     }
 
     @Override
-    protected List<MenuDtoEntity> dataAccess(HashMap<String, String> parameters) {
+    protected List<MenuDtoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
         //find menu list
         List<MenuDaoEntity> menuDaoEntityList = menuRepository.findByAccountId(accountId);
         List<MenuDtoEntity> menuTreeList = generateMenuTree(menuDaoEntityList);
@@ -98,7 +98,7 @@ public class GetAccountMenuListService extends BaseQueryDataService<List<MenuDto
     }
 
     @Override
-    protected ResponseDataEntity<List<MenuDtoEntity>> generateResultData(List<MenuDtoEntity> menuDtoEntityList) {
+    protected ResponseDataEntity<List<MenuDtoEntity>> generateResultData(String accountId, List<MenuDtoEntity> menuDtoEntityList) {
         ResponseDataEntity<List<MenuDtoEntity>> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(menuDtoEntityList);
         responseDataEntity.setReturnCode(1);

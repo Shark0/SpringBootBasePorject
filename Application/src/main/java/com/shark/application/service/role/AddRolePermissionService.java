@@ -38,15 +38,15 @@ public class AddRolePermissionService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long roleId = Long.valueOf(parameters.get(INPUT_ROLE_ID));
         long permissionId = Long.valueOf(parameters.get(INPUT_PERMISSION_ID));
-        RoleDaoEntity roleDaoEntity = roleRepository.findOne(roleId);
+        RoleDaoEntity roleDaoEntity = roleRepository.findById(roleId).get();
         if(roleDaoEntity == null) {
             throw new ResponseException(-1, "Role doesn't exist");
         }
 
-        PermissionDaoEntity permissionDaoEntity = permissionRepository.findOne(permissionId);
+        PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(permissionId).get();
         if(permissionDaoEntity == null) {
             throw new ResponseException(-1, "Permission doesn't exist");
         }

@@ -28,11 +28,11 @@ public class EditAccountService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) throws Exception {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
         String id = parameters.get(INPUT_ID);
         String name = parameters.get(INPUT_NAME);
         String password = parameters.get(INPUT_PASSWORD);
-        AccountDaoEntity accountDaoEntity = memberRepository.findOne(Long.valueOf(id));
+        AccountDaoEntity accountDaoEntity = memberRepository.findById(Long.valueOf(id)).get();
         if(accountDaoEntity == null) {
             throw new ResponseException(-1, "帳號不存在");
         }

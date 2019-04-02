@@ -35,7 +35,7 @@ public class AddMenuService extends BaseQueryDataService<MenuDaoEntity, MenuDtoE
     }
 
     @Override
-    protected MenuDaoEntity dataAccess(HashMap<String, String> parameters) {
+    protected MenuDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
         String name = parameters.get(INPUT_NAME);
         String iconUrl = parameters.get(INPUT_ICON_URL);
         String path = parameters.get(INPUT_PATH);
@@ -58,7 +58,7 @@ public class AddMenuService extends BaseQueryDataService<MenuDaoEntity, MenuDtoE
     }
 
     @Override
-    protected ResponseDataEntity<MenuDtoEntity> generateResultData(MenuDaoEntity menuDaoEntity) {
+    protected ResponseDataEntity<MenuDtoEntity> generateResultData(String accountId, MenuDaoEntity menuDaoEntity) {
         ResponseDataEntity<MenuDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(new MenuDtoEntity(menuDaoEntity));
         responseDataEntity.setReturnCode(1);

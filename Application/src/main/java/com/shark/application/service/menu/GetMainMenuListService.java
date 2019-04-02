@@ -24,13 +24,13 @@ public class GetMainMenuListService extends BaseQueryDataService<List<MenuDaoEnt
     }
 
     @Override
-    protected List<MenuDaoEntity> dataAccess(HashMap<String, String> parameters) {
+    protected List<MenuDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
         List<MenuDaoEntity> menuDaoEntityList = menuRepository.findMainMenu();
         return menuDaoEntityList;
     }
 
     @Override
-    protected ResponseDataEntity<List<MenuDaoEntity>> generateResultData(List<MenuDaoEntity> data) {
+    protected ResponseDataEntity<List<MenuDaoEntity>> generateResultData(String accountId, List<MenuDaoEntity> data) {
         ResponseDataEntity<List<MenuDaoEntity>> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);

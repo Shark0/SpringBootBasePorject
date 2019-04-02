@@ -29,13 +29,13 @@ public class GetAccountService extends BaseQueryDataService<AccountDaoEntity, Ac
     }
 
     @Override
-    protected AccountDaoEntity dataAccess(HashMap<String, String> parameters) {
-        String accountId = parameters.get(INPUT_ID);
-        return accountRepository.findOne(Long.valueOf(accountId));
+    protected AccountDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
+        String accountIdParameter = parameters.get(INPUT_ID);
+        return accountRepository.findById(Long.valueOf(accountIdParameter)).get();
     }
 
     @Override
-    protected ResponseDataEntity<AccountDaoEntity> generateResultData(AccountDaoEntity data) {
+    protected ResponseDataEntity<AccountDaoEntity> generateResultData(String accountId, AccountDaoEntity data) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);

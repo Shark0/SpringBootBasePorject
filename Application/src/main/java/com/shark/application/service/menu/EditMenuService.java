@@ -37,14 +37,14 @@ public class EditMenuService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         String id = parameters.get(INPUT_ID);
         String name = parameters.get(INPUT_NAME);
         String iconUrl = parameters.get(INPUT_ICON_URL);
         String path = parameters.get(INPUT_PATH);
         String parentId = parameters.get(INPUT_PARENT_ID);
         String sort = parameters.get(INPUT_SORT);
-        MenuDaoEntity menuDaoEntity = menuRepository.findOne(Long.valueOf(id));
+        MenuDaoEntity menuDaoEntity = menuRepository.findById(Long.valueOf(id)).get();
         if(menuDaoEntity == null) {
             throw new ResponseException(-1, "Menu is not exist");
         }

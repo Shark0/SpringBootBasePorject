@@ -28,13 +28,13 @@ public class DeleteRolePermissionService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long roleId = Long.valueOf(parameters.get(INPUT_ROLE_ID));
         long permissionId = Long.valueOf(parameters.get(INPUT_PERMISSION_ID));
         RolePermissionIdEntity rolePermissionIdEntity = new RolePermissionIdEntity();
         rolePermissionIdEntity.setRoleId(roleId);
         rolePermissionIdEntity.setPermissionId(permissionId);
-        rolePermissionRepository.delete(rolePermissionIdEntity);
+        rolePermissionRepository.deleteById(rolePermissionIdEntity);
         return null;
     }
 }

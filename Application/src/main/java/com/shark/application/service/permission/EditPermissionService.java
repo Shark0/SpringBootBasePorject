@@ -28,9 +28,9 @@ public class EditPermissionService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long id = Long.valueOf(parameters.get(INPUT_ID));
-        PermissionDaoEntity permissionDaoEntity = permissionRepository.findOne(id);
+        PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(id).get();
         if(permissionDaoEntity == null) {
             throw new ResponseException(-1, "Permission doesn't exist");
         }

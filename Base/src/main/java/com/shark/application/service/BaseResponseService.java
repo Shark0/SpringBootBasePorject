@@ -31,7 +31,7 @@ public abstract class BaseResponseService extends BaseService<HashMap<String, St
     }
 
     @Override
-    protected ResponseEntity generateResultData(Void data) {
+    protected ResponseEntity generateResultData(String accountId,  Void data) {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setReturnCode(1);
         return responseEntity;

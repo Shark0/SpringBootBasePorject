@@ -33,12 +33,11 @@ public class LoginService extends BaseQueryDataService<AccountDaoEntity, LoginDt
     }
 
     @Override
-    protected AccountDaoEntity dataAccess(HashMap<String, String> parameters) throws Exception {
+    protected AccountDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
         String account = parameters.get(INPUT_ACCOUNT);
         String password = parameters.get(INPUT_PASSWORD);
 
         AccountDaoEntity accountDaoEntity = accountRepository.findByAccount(account);
-        this.accountId = String.valueOf(accountDaoEntity.getId());
         if(accountDaoEntity == null){
             ResponseException exception = new ResponseException();
             exception.setReturnCode(-1);
@@ -56,12 +55,12 @@ public class LoginService extends BaseQueryDataService<AccountDaoEntity, LoginDt
     }
 
     @Override
-    protected ResponseDataEntity<LoginDtoEntity> generateResultData(AccountDaoEntity accountDaoEntity) {
+    protected ResponseDataEntity<LoginDtoEntity> generateResultData(String accountId, AccountDaoEntity accountDaoEntity) {
         ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
         memberDtoEntity.setAccountName(accountDaoEntity.getName());
         String jwt = SecurityConfiguration.TOKEN_PREFIX + Jwts.builder()
-                .setSubject(accountId)
+                .setSubject(String.valueOf(accountDaoEntity.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.JWT_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.SECRET.getBytes())
                 .compact();

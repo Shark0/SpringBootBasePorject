@@ -33,13 +33,13 @@ public class DeletePermissionService extends BaseResponseService {
     }
 
     @Override
-    protected Void dataAccess(HashMap<String, String> parameters) {
+    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
         long id = Long.valueOf(parameters.get(INPUT_ID));
         RolePermissionDaoEntity rolePermissionDaoEntity = rolePermissionRepository.findByPermissionId(id);
         if(rolePermissionDaoEntity != null) {
             throw new ResponseException(-1, "權限跟角色榜定，請先刪除榜定");
         }
-        permissionRepository.delete(id);
+        permissionRepository.deleteById(id);
         return null;
     }
 }

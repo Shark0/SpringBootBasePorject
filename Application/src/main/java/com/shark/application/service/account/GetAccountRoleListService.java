@@ -28,9 +28,9 @@ public class GetAccountRoleListService extends BaseQueryDataService<List<Account
     }
 
     @Override
-    protected List<AccountRoleDtoEntity> dataAccess(HashMap<String, String> parameters) {
-        String accountId = parameters.get(INPUT_ID);
-        List<RoleDaoEntity> accountRoleList = roleRepository.findByAccountId(accountId);
+    protected List<AccountRoleDtoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
+        String accountIdParameter = parameters.get(INPUT_ID);
+        List<RoleDaoEntity> accountRoleList = roleRepository.findByAccountId(accountIdParameter);
         HashMap<Long, RoleDaoEntity> accountRoleHashMap = new HashMap<>();
         for(RoleDaoEntity roleDaoEntity: accountRoleList) {
             accountRoleHashMap.put(roleDaoEntity.getId(), roleDaoEntity);
@@ -48,7 +48,7 @@ public class GetAccountRoleListService extends BaseQueryDataService<List<Account
     }
 
     @Override
-    protected ResponseDataEntity<List<AccountRoleDtoEntity>> generateResultData(List<AccountRoleDtoEntity> data) {
+    protected ResponseDataEntity<List<AccountRoleDtoEntity>> generateResultData(String accountId, List<AccountRoleDtoEntity> data) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);

@@ -30,7 +30,7 @@ public class GetMenuRoleListService extends BaseQueryDataService<List<MenuRoleDt
     }
 
     @Override
-    protected List<MenuRoleDtoEntity> dataAccess(HashMap<String, String> parameters) {
+    protected List<MenuRoleDtoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
         String menuId = parameters.get(INPUT_MENU_ID);
         List<RoleDaoEntity> menuRoleList = roleRepository.findByMenuId(menuId);
         HashMap<Long, RoleDaoEntity> menuRoleHashMap = new HashMap<>();
@@ -50,7 +50,7 @@ public class GetMenuRoleListService extends BaseQueryDataService<List<MenuRoleDt
     }
 
     @Override
-    protected ResponseDataEntity<List<MenuRoleDtoEntity>> generateResultData(List<MenuRoleDtoEntity> groupDaoEntityList) {
+    protected ResponseDataEntity<List<MenuRoleDtoEntity>> generateResultData(String accountId, List<MenuRoleDtoEntity> groupDaoEntityList) {
         ResponseDataEntity<List<MenuRoleDtoEntity>> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(groupDaoEntityList);
         responseDataEntity.setReturnCode(1);

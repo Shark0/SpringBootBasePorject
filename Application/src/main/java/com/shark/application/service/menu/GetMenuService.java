@@ -27,10 +27,10 @@ public class GetMenuService extends BaseQueryDataService<MenuDtoEntity, MenuDtoE
     }
 
     @Override
-    protected MenuDtoEntity dataAccess(HashMap<String, String> parameters) {
+    protected MenuDtoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
         //find menu list
         String id = parameters.get(INPUT_ID);
-        List<MenuDaoEntity> menuDaoEntityList = menuRepository.findById(Long.valueOf(id));
+        List<MenuDaoEntity> menuDaoEntityList = menuRepository.findByMenuIdOrParentId(Long.valueOf(id));
         return generateMenu(Long.valueOf(id), menuDaoEntityList);
     }
 
@@ -80,7 +80,7 @@ public class GetMenuService extends BaseQueryDataService<MenuDtoEntity, MenuDtoE
     }
 
     @Override
-    protected ResponseDataEntity<MenuDtoEntity> generateResultData(MenuDtoEntity data) {
+    protected ResponseDataEntity<MenuDtoEntity> generateResultData(String accountId, MenuDtoEntity data) {
         ResponseDataEntity<MenuDtoEntity> responseDataEntity = new ResponseDataEntity<>();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);

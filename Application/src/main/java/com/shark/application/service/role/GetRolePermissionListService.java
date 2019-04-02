@@ -27,7 +27,7 @@ public class GetRolePermissionListService extends BaseQueryDataService<List<Role
     }
 
     @Override
-    protected List<RolePermissionDtoEntity> dataAccess(HashMap<String, String> parameters) {
+    protected List<RolePermissionDtoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
         String roleId = parameters.get(INPUT_ROLE_ID);
         List<PermissionDaoEntity> rolePermissionList = permissionRepository.findByRoleId(roleId);
         HashMap<Long, PermissionDaoEntity> rolePermissionHashMap = new HashMap<>();
@@ -47,7 +47,7 @@ public class GetRolePermissionListService extends BaseQueryDataService<List<Role
     }
 
     @Override
-    protected ResponseDataEntity<List<RolePermissionDtoEntity>> generateResultData(List<RolePermissionDtoEntity> data) {
+    protected ResponseDataEntity<List<RolePermissionDtoEntity>> generateResultData(String accountId, List<RolePermissionDtoEntity> data) {
         ResponseDataEntity responseDataEntity = new ResponseDataEntity();
         responseDataEntity.setData(data);
         responseDataEntity.setReturnCode(1);
