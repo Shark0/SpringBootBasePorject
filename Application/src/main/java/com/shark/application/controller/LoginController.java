@@ -3,6 +3,7 @@ package com.shark.application.controller;
 import com.shark.application.dto.ResponseDataEntity;
 import com.shark.application.dto.login.LoginDtoEntity;
 import com.shark.application.service.login.LoginService;
+import com.shark.application.service.login.RefreshService;
 import com.shark.application.service.login.RegisterService;
 import com.shark.application.util.ServletUtil;
 import io.swagger.annotations.Api;
@@ -53,4 +54,20 @@ public class LoginController {
                 ServletUtil.generateServiceParameters(request, getClass(), "register", false);
         return registerService.request("", parameters);
     }
+
+    @Autowired
+    private RefreshService refreshService;
+
+    @ApiOperation(value = "更新Access Token", notes = "", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = RefreshService.INPUT_ACCESS_TOKEN, value = "Access Token", required = true, paramType = "query"),
+            @ApiImplicitParam(name = RefreshService.INPUT_REFRESH_TOKEN, value = "Refresh Token", required = true, paramType = "query"),
+    })
+    @PostMapping("/refresh")
+    public ResponseDataEntity<LoginDtoEntity> refresh(HttpServletRequest request) {
+        HashMap<String, String> parameters =
+                ServletUtil.generateServiceParameters(request, getClass(), "refresh", false);
+        return refreshService.request("", parameters);
+    }
+
 }

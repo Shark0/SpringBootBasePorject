@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class LoginAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -32,9 +31,9 @@ public class LoginAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader(SecurityConfiguration.AUTH_HEADER);
+        String header = request.getHeader(SecurityConfiguration.ACCESS_HEADER);
 //        System.out.println("LoginAuthorizationFilter doFilterInternal header: " + header);
-        if(header != null && header.startsWith(SecurityConfiguration.TOKEN_PREFIX)) {
+        if(header != null && header.startsWith(SecurityConfiguration.ACCESS_PREFIX)) {
             UsernamePasswordAuthenticationToken authentication = getAuthentication(header);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -46,8 +45,8 @@ public class LoginAuthorizationFilter extends BasicAuthenticationFilter {
         String account = null;
         try {
             account = Jwts.parser()
-                    .setSigningKey(SecurityConfiguration.SECRET.getBytes())
-                    .parseClaimsJws(header.replace(SecurityConfiguration.TOKEN_PREFIX, ""))
+                    .setSigningKey(SecurityConfiguration.ACCESS_SECRET.getBytes())
+                    .parseClaimsJws(header.replace(SecurityConfiguration.ACCESS_PREFIX, ""))
                     .getBody()
                     .getSubject();
         } catch (Exception e) {

@@ -25,7 +25,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket docket() {
         List<Parameter> parameterList = new ArrayList<>();
-        parameterList.add(new ParameterBuilder().name(SecurityConfiguration.AUTH_HEADER).description("請輸入JWT")
+        parameterList.add(new ParameterBuilder().name(SecurityConfiguration.ACCESS_HEADER).description("請輸入JWT")
                 .modelRef(new ModelRef("string")).parameterType("header").required(false).build());
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(this.apiInfo())

@@ -42,8 +42,8 @@ public class AccountTests {
     public void testGetAccountMenuList() {
         String jwt = "base_eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNTUzNzQzNDY1fQ.gnmmYph0AeHHc6bMzDjfFwVsXMLFzTnnDoSrptXmvX74GGfXS718RvEOhP2N2ODYX0CP_EQM6N_XSZsS_tILIg";
         String account = Jwts.parser()
-                .setSigningKey(SecurityConfiguration.SECRET.getBytes())
-                .parseClaimsJws(jwt.replace(SecurityConfiguration.TOKEN_PREFIX, ""))
+                .setSigningKey(SecurityConfiguration.ACCESS_SECRET.getBytes())
+                .parseClaimsJws(jwt.replace(SecurityConfiguration.ACCESS_PREFIX, ""))
                 .getBody()
                 .getSubject();
         HashMap<String, String> parameters = new HashMap<>();

@@ -36,6 +36,7 @@ public class LoginWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapt
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/login").permitAll()
                 .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/register").permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/refresh").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-resources/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/v2/**").permitAll()
