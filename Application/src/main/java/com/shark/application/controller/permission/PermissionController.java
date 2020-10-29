@@ -28,7 +28,7 @@ public class PermissionController {
     private final AddPermissionService addPermissionService;
 
     @ApiOperation(value = "新增權限", notes = "", produces = "application/json")
-    @PostMapping("/addPermission")
+    @PostMapping
     @PreAuthorize("hasAuthority('permission')")
     public ResponseDto<PermissionDo> addPermission(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
@@ -40,7 +40,7 @@ public class PermissionController {
     private final DeletePermissionService deletePermissionService;
 
     @ApiOperation(value = "刪除權限", notes = "-1：權限跟角色榜定，請先刪除榜定", produces = "application/json")
-    @DeleteMapping("/{permissionId}}")
+    @DeleteMapping("/{permissionId}")
     @PreAuthorize("hasAuthority('permission')")
     public ResponseDto deletePermission(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
@@ -72,7 +72,7 @@ public class PermissionController {
     private final GetPermissionService getPermissionService;
 
     @ApiOperation(value = "取得權限", notes = "", produces = "application/json")
-    @GetMapping("/{permissionId}}")
+    @GetMapping("/{permissionId}")
     @PreAuthorize("hasAuthority('permission')")
     public ResponseDto<PermissionDo> getPermission(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,

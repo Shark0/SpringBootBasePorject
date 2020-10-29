@@ -65,7 +65,7 @@ public class RoleController {
     private final DeleteRoleService deleteRoleService;
 
     @ApiOperation(value = "刪除角色")
-    @DeleteMapping("/{roleId}}")
+    @DeleteMapping("/{roleId}")
     @PreAuthorize("hasAuthority('role')")
     public ResponseDto deleteRole(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
@@ -97,7 +97,7 @@ public class RoleController {
     private final GetRoleService getRoleService;
 
     @ApiOperation(value = "取得角色")
-    @GetMapping(value = "/{roleId}}")
+    @GetMapping(value = "/{roleId}")
     @PreAuthorize("hasAuthority('role')")
     public ResponseDto<RoleDo> getRole(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,

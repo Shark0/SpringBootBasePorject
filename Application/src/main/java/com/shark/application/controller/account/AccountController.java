@@ -105,7 +105,7 @@ public class AccountController {
     private final SearchAccountListService searchAccountListService;
 
     @ApiOperation(value = "搜尋帳號列表", notes = "", produces = "application/json")
-    @PostMapping("/page/{pageNumber}")
+    @GetMapping("/page/{pageNumber}")
     @PreAuthorize("hasAuthority('account')")
     public ResponseDto<PageDto<AccountDo>> searchAccountList(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,

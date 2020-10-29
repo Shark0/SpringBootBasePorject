@@ -53,7 +53,7 @@ public class MenuController {
     private final DeleteMenuRoleService deleteMenuRoleService;
 
     @ApiOperation(value = "刪除選單角色", notes = "", produces = "application/json")
-    @DeleteMapping("/{menuId}/role/{roleId}}")
+    @DeleteMapping("/{menuId}/role/{roleId}")
     @PreAuthorize("hasAuthority('menu')")
     public ResponseDto deleteMenuRole(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
@@ -68,7 +68,7 @@ public class MenuController {
 
     @ApiOperation(value = "刪除選單", notes = "", produces = "application/json")
 
-    @DeleteMapping("/{menuId}}")
+    @DeleteMapping("/{menuId}")
     @PreAuthorize("hasAuthority('menu')")
     public ResponseDto deleteMenu(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
@@ -111,7 +111,7 @@ public class MenuController {
     private final GetMenuService getMenuService;
 
     @ApiOperation(value = "取得選單", notes = "", produces = "application/json")
-    @GetMapping(value = "/{menuId}}")
+    @GetMapping(value = "/{menuId}")
     @PreAuthorize("hasAuthority('menu')")
     public ResponseDto<MenuDto> getMenu(
             @ApiIgnore @AuthenticationPrincipal AuthAccountDo authAccountDo,
