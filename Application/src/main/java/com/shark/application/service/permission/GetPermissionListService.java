@@ -1,36 +1,31 @@
 package com.shark.application.service.permission;
 
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class GetPermissionListService extends BaseQueryDataService<List<PermissionDaoEntity>, List<PermissionDaoEntity>> {
+public class GetPermissionListService extends BaseQueryDataService<Void, List<PermissionDo>, List<PermissionDo>> {
 
-    @Autowired
-    private PermissionRepository permissionRepository;
-
-    @Override
-    protected List<String> generateCheckKeyList() {
-        return null;
-    }
+    private final PermissionRepository permissionRepository;
 
     @Override
-    protected List<PermissionDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
+    protected List<PermissionDo> process(AuthAccountDo authAccountDo, Void unused) throws Exception {
         return permissionRepository.findAll();
     }
 
     @Override
-    protected ResponseDataEntity<List<PermissionDaoEntity>> generateResultData(String accountId, List<PermissionDaoEntity> roleDaoEntityList) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(roleDaoEntityList);
-        responseDataEntity.setReturnCode(1);
-        return responseDataEntity;
+    protected ResponseDto<List<PermissionDo>> generateResult(AuthAccountDo authAccountDo, List<PermissionDo> permissionDoList) {
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setResultData(permissionDoList);
+        responseDto.setReturnCode(1);
+        return responseDto;
     }
 }

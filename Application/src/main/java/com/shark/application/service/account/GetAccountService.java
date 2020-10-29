@@ -1,44 +1,30 @@
 package com.shark.application.service.account;
 
-import com.google.common.collect.Lists;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.dto.account.AccountRoleDtoEntity;
-import com.shark.application.repository.account.AccountRepository;
-import com.shark.application.repository.account.dao.AccountDaoEntity;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class GetAccountService extends BaseQueryDataService<AccountDaoEntity, AccountDaoEntity> {
+public class GetAccountService extends BaseQueryDataService<Long, AccountDo, AccountDo> {
 
-    public static final String INPUT_ID = "id";
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
+    protected AccountDo process(AuthAccountDo authAccountDo, Long accountId) throws Exception {
+        return accountRepository.findById(accountId).orElseThrow(() -> new WarningException("account.does.not.exist"));
     }
 
     @Override
-    protected AccountDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
-        String accountIdParameter = parameters.get(INPUT_ID);
-        return accountRepository.findById(Long.valueOf(accountIdParameter)).get();
-    }
-
-    @Override
-    protected ResponseDataEntity<AccountDaoEntity> generateResultData(String accountId, AccountDaoEntity data) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(data);
-        responseDataEntity.setReturnCode(1);
-        return responseDataEntity;
+    protected ResponseDto<AccountDo> generateResult(AuthAccountDo authAccountDo, AccountDo accountDo) {
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setResultData(accountDo);
+        responseDto.setReturnCode(1);
+        return responseDto;
     }
 }

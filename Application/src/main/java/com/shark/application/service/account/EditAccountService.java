@@ -1,48 +1,36 @@
 package com.shark.application.service.account;
 
-import com.google.common.collect.Lists;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.account.AccountRepository;
-import com.shark.application.repository.account.dao.AccountDaoEntity;
+import com.shark.application.controller.account.pojo.AccountDio;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseResponseService;
 import com.shark.application.util.StringUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class EditAccountService extends BaseResponseService {
+public class EditAccountService extends BaseResponseService<AccountDio> {
 
-    public static final String INPUT_ID = "id";
-    public static final String INPUT_NAME = "name";
-    public static final String INPUT_PASSWORD = "password";
-
-    @Autowired
-    private AccountRepository memberRepository;
+    private final AccountRepository accountRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
-        String id = parameters.get(INPUT_ID);
-        String name = parameters.get(INPUT_NAME);
-        String password = parameters.get(INPUT_PASSWORD);
-        AccountDaoEntity accountDaoEntity = memberRepository.findById(Long.valueOf(id)).get();
-        if(accountDaoEntity == null) {
-            throw new ResponseException(-1, "帳號不存在");
+    protected Void process(AuthAccountDo authAccountDo, AccountDio accountDio) throws Exception {
+        AccountDo accountDo = accountRepository.findById(authAccountDo.getId())
+                .orElseThrow(() -> new WarningException("account.does.not.exist"));
+        if (!StringUtil.isEmpty(accountDio.getName())) {
+            accountDo.setName(accountDio.getName());
         }
-        if(!StringUtil.isEmpty(name)) {
-            accountDaoEntity.setName(name);
+        if (!StringUtil.isEmpty(accountDio.getPassword())) {
+            String encryptedPwd = bCryptPasswordEncoder.encode(accountDio.getPassword());
+            accountDo.setPassword(encryptedPwd);
         }
-        if(!StringUtil.isEmpty(password)) {
-            accountDaoEntity.setPassword(password);
-        }
-        memberRepository.save(accountDaoEntity);
+        accountRepository.save(accountDo);
         return null;
     }
 }

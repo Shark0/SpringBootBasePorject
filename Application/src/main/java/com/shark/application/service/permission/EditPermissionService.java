@@ -1,48 +1,33 @@
 package com.shark.application.service.permission;
 
-import com.google.common.collect.Lists;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
+import com.shark.application.controller.permission.pojo.PermissionEditDio;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseResponseService;
 import com.shark.application.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class EditPermissionService extends BaseResponseService {
+public class EditPermissionService extends BaseResponseService<PermissionEditDio> {
 
-    public static final String INPUT_ID = "id";
-    public static final String INPUT_NAME = "name";
-    public static final String INPUT_CODE = "code";
-
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
-    }
+    protected Void process(AuthAccountDo authAccountDo, PermissionEditDio permissionEditDio) throws Exception {
+        PermissionDo permissionDo = permissionRepository.findById(permissionEditDio.getId())
+                .orElseThrow(() -> new WarningException("permission.does.not.exist"));
 
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        long id = Long.valueOf(parameters.get(INPUT_ID));
-        PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(id).get();
-        if(permissionDaoEntity == null) {
-            throw new ResponseException(-1, "Permission doesn't exist");
+        if(!StringUtil.isEmpty(permissionEditDio.getName())) {
+            permissionDo.setName(permissionEditDio.getName());
         }
-        String name = parameters.get(INPUT_NAME);
-        if(!StringUtil.isEmpty(name)) {
-            permissionDaoEntity.setName(name);
+        if(!StringUtil.isEmpty(permissionEditDio.getCode())) {
+            permissionDo.setCode(permissionEditDio.getCode());
         }
-        String code = parameters.get(INPUT_CODE);
-        if(!StringUtil.isEmpty(code)) {
-            permissionDaoEntity.setCode(code);
-        }
-        permissionRepository.save(permissionDaoEntity);
+        permissionRepository.save(permissionDo);
         return null;
     }
 }

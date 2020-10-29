@@ -22,12 +22,12 @@
 		<gson.version>2.8.2</gson.version>
 		<swagger.version>2.9.2</swagger.version>
 		<apache.poi.version>3.14</apache.poi.version>
-		<jackson.version>2.9.1</jackson.version>
-		<ojdbc.version>11.2.0</ojdbc.version>
-		<mybatis.spring-boot.starter.version>1.1.1</mybatis.spring-boot.starter.version>
-		<jwt.version>0.9.0</jwt.version>
 		<guava.version>23.0</guava.version>
-		<jasypt.version>1.18</jasypt.version>
+		<lombok.version>1.18.8</lombok.version>
+		<mybatis.version>2.1.1</mybatis.version>
+		<hibernate-types-52.version>2.7.1</hibernate-types-52.version>
+		<jackson.version>2.9.1</jackson.version>
+		<jwt.version>0.9.0</jwt.version>
 	</properties>
 
 	<parent>
@@ -78,14 +78,11 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			<!--mybatis -->
-			<!--
 			<dependency>
 				<groupId>org.mybatis.spring.boot</groupId>
 				<artifactId>mybatis-spring-boot-starter</artifactId>
-				<version>${mybatis.spring-boot.starter.version}</version>
+				<version>${mybatis.version}</version>
 			</dependency>
-			-->
 			<!--jwt -->
 			<dependency>
 				<groupId>io.jsonwebtoken</groupId>
@@ -97,6 +94,19 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
+			</dependency>
+			<!-- Lombok -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- hibernate-types-52 -->
+			<dependency>
+				<groupId>com.vladmihalcea</groupId>
+				<artifactId>hibernate-types-52</artifactId>
+				<version>${hibernate-types-52.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

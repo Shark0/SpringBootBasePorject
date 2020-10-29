@@ -1,20 +1,20 @@
 package com.shark.application;
 
 
-import com.shark.application.repository.account.AccountRepository;
-import com.shark.application.repository.account.AccountRoleRepository;
-import com.shark.application.repository.account.dao.AccountDaoEntity;
-import com.shark.application.repository.account.dao.AccountRoleDaoEntity;
-import com.shark.application.repository.menu.MenuRepository;
-import com.shark.application.repository.menu.MenuRoleRepository;
-import com.shark.application.repository.menu.dao.MenuDaoEntity;
-import com.shark.application.repository.menu.dao.MenuRoleDaoEntity;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
-import com.shark.application.repository.role.RolePermissionRepository;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
-import com.shark.application.repository.role.dao.RolePermissionDaoEntity;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.AccountRoleRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.dao.repository.account.pojo.AccountRoleDo;
+import com.shark.application.dao.repository.menu.MenuRepository;
+import com.shark.application.dao.repository.menu.MenuRoleRepository;
+import com.shark.application.dao.repository.menu.pojo.MenuDo;
+import com.shark.application.dao.repository.menu.pojo.MenuRoleDo;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
+import com.shark.application.dao.repository.role.RolePermissionRepository;
+import com.shark.application.dao.repository.role.RoleRepository;
+import com.shark.application.dao.repository.role.pojo.RoleDo;
+import com.shark.application.dao.repository.role.pojo.RolePermissionDo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,146 +54,146 @@ public class ApplicationTests {
 	public void testContext() throws Exception {
 		//create 'root' account
         String account = "root";
-        AccountDaoEntity accountDaoEntity = accountRepository.findByAccount(account);
-        if(accountDaoEntity != null) {
+        AccountDo accountDo = accountRepository.findByAccount(account);
+        if(accountDo != null) {
             return;
         }
-        accountDaoEntity = new AccountDaoEntity();
-        accountDaoEntity.setName("root");
-        accountDaoEntity.setAccount("root");
-        accountDaoEntity.setPassword("root");
-        accountDaoEntity = accountRepository.save(accountDaoEntity);
-        long accountId = accountDaoEntity.getId();
+        accountDo = new AccountDo();
+        accountDo.setName("root");
+        accountDo.setAccount("root");
+        accountDo.setPassword("root");
+        accountDo = accountRepository.save(accountDo);
+        long accountId = accountDo.getId();
         System.out.println("root account id: " + accountId);
 
         //create 'admin' role
-        RoleDaoEntity adminRoleDaoEntity = new RoleDaoEntity();
-        adminRoleDaoEntity.setName("admin");
-        adminRoleDaoEntity = roleRepository.save(adminRoleDaoEntity);
-        System.out.println("admin role id: " + adminRoleDaoEntity.getId());
+        RoleDo adminRoleDo = new RoleDo();
+        adminRoleDo.setName("admin");
+        adminRoleDo = roleRepository.save(adminRoleDo);
+        System.out.println("admin role id: " + adminRoleDo.getId());
 
         //add 'admin' role to 'root' account
-        AccountRoleDaoEntity accountRoleDaoEntity = new AccountRoleDaoEntity();
-        accountRoleDaoEntity.setAccountId(accountDaoEntity.getId());
-        accountRoleDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        accountRoleRepository.save(accountRoleDaoEntity);
+        AccountRoleDo accountRoleDo = new AccountRoleDo();
+        accountRoleDo.setAccountId(accountDo.getId());
+        accountRoleDo.setRoleId(adminRoleDo.getId());
+        accountRoleRepository.save(accountRoleDo);
 
         //create 'permission' permission
-        PermissionDaoEntity permissionPermissionDaoEntity = new PermissionDaoEntity();
-        permissionPermissionDaoEntity.setName("權限");
-        permissionPermissionDaoEntity.setCode("permission");
-        permissionPermissionDaoEntity = permissionRepository.save(permissionPermissionDaoEntity);
-        System.out.println("permission permission id: " + permissionPermissionDaoEntity.getId());
+        PermissionDo permissionPermissionDo = new PermissionDo();
+        permissionPermissionDo.setName("權限");
+        permissionPermissionDo.setCode("permission");
+        permissionPermissionDo = permissionRepository.save(permissionPermissionDo);
+        System.out.println("permission permission id: " + permissionPermissionDo.getId());
 
         //add 'permission' permission to 'admin' role
-        RolePermissionDaoEntity permissionRolePermissionDaoEntity = new RolePermissionDaoEntity();
-        permissionRolePermissionDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        permissionRolePermissionDaoEntity.setPermissionId(permissionPermissionDaoEntity.getId());
-        rolePermissionRepository.save(permissionRolePermissionDaoEntity);
+        RolePermissionDo permissionRolePermissionDo = new RolePermissionDo();
+        permissionRolePermissionDo.setRoleId(adminRoleDo.getId());
+        permissionRolePermissionDo.setPermissionId(permissionPermissionDo.getId());
+        rolePermissionRepository.save(permissionRolePermissionDo);
 
         //create 'role' permission
-        PermissionDaoEntity rolePermissionDaoEntity = new PermissionDaoEntity();
-        rolePermissionDaoEntity.setName("角色");
-        rolePermissionDaoEntity.setCode("role");
-        rolePermissionDaoEntity = permissionRepository.save(rolePermissionDaoEntity);
-        System.out.println("role permission id: " + rolePermissionDaoEntity.getId());
+        PermissionDo rolePermissionDo = new PermissionDo();
+        rolePermissionDo.setName("角色");
+        rolePermissionDo.setCode("role");
+        rolePermissionDo = permissionRepository.save(rolePermissionDo);
+        System.out.println("role permission id: " + rolePermissionDo.getId());
 
         //add 'role' permission to 'admin' role
-        RolePermissionDaoEntity roleRolePermissionDaoEntity = new RolePermissionDaoEntity();
-        roleRolePermissionDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        roleRolePermissionDaoEntity.setPermissionId(rolePermissionDaoEntity.getId());
-        rolePermissionRepository.save(roleRolePermissionDaoEntity);
+        RolePermissionDo roleRolePermissionDo = new RolePermissionDo();
+        roleRolePermissionDo.setRoleId(adminRoleDo.getId());
+        roleRolePermissionDo.setPermissionId(rolePermissionDo.getId());
+        rolePermissionRepository.save(roleRolePermissionDo);
 
         //create 'menu' permission
-        PermissionDaoEntity menuPermissionDaoEntity = new PermissionDaoEntity();
-        menuPermissionDaoEntity.setName("選單");
-        menuPermissionDaoEntity.setCode("menu");
-        menuPermissionDaoEntity = permissionRepository.save(menuPermissionDaoEntity);
-        System.out.println("menu permission id: " + menuPermissionDaoEntity.getId());
+        PermissionDo menuPermissionDo = new PermissionDo();
+        menuPermissionDo.setName("選單");
+        menuPermissionDo.setCode("menu");
+        menuPermissionDo = permissionRepository.save(menuPermissionDo);
+        System.out.println("menu permission id: " + menuPermissionDo.getId());
 
         //add 'menu' permission to 'admin' role
-        RolePermissionDaoEntity menuRolePermissionDaoEntity = new RolePermissionDaoEntity();
-        menuRolePermissionDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        menuRolePermissionDaoEntity.setPermissionId(menuPermissionDaoEntity.getId());
-        rolePermissionRepository.save(menuRolePermissionDaoEntity);
+        RolePermissionDo menuRolePermissionDo = new RolePermissionDo();
+        menuRolePermissionDo.setRoleId(adminRoleDo.getId());
+        menuRolePermissionDo.setPermissionId(menuPermissionDo.getId());
+        rolePermissionRepository.save(menuRolePermissionDo);
 
         //create 'account' permission
-        PermissionDaoEntity accountPermissionDaoEntity = new PermissionDaoEntity();
-        accountPermissionDaoEntity.setName("帳號");
-        accountPermissionDaoEntity.setCode("account");
-        accountPermissionDaoEntity = permissionRepository.save(accountPermissionDaoEntity);
-        System.out.println("account permission id: " + accountPermissionDaoEntity.getId());
+        PermissionDo accountPermissionDo = new PermissionDo();
+        accountPermissionDo.setName("帳號");
+        accountPermissionDo.setCode("account");
+        accountPermissionDo = permissionRepository.save(accountPermissionDo);
+        System.out.println("account permission id: " + accountPermissionDo.getId());
 
         //add 'account' permission to 'admin' role
-        RolePermissionDaoEntity accountRolePermissionDaoEntity = new RolePermissionDaoEntity();
-        accountRolePermissionDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        accountRolePermissionDaoEntity.setPermissionId(accountPermissionDaoEntity.getId());
-        rolePermissionRepository.save(accountRolePermissionDaoEntity);
+        RolePermissionDo accountRolePermissionDo = new RolePermissionDo();
+        accountRolePermissionDo.setRoleId(adminRoleDo.getId());
+        accountRolePermissionDo.setPermissionId(accountPermissionDo.getId());
+        rolePermissionRepository.save(accountRolePermissionDo);
 
         //create home menu
-        MenuDaoEntity homeMenuDaoEntity = new MenuDaoEntity();
-        homeMenuDaoEntity.setParentId((long) 0);
-        homeMenuDaoEntity.setName("首頁");
-        homeMenuDaoEntity.setPath("/home/main");
-        menuRepository.save(homeMenuDaoEntity);
+        MenuDo homeMenuDo = new MenuDo();
+        homeMenuDo.setParentId((long) 0);
+        homeMenuDo.setName("首頁");
+        homeMenuDo.setPath("/home/main");
+        menuRepository.save(homeMenuDo);
 
         //create permission manage menu
-        MenuDaoEntity accountPermissionManageMenuDaoEntity = new MenuDaoEntity();
-        accountPermissionManageMenuDaoEntity.setParentId((long) 0);
-        accountPermissionManageMenuDaoEntity.setName("帳號權限管理");
-        accountPermissionManageMenuDaoEntity = menuRepository.save(accountPermissionManageMenuDaoEntity);
+        MenuDo accountPermissionManageMenuDo = new MenuDo();
+        accountPermissionManageMenuDo.setParentId((long) 0);
+        accountPermissionManageMenuDo.setName("帳號權限管理");
+        accountPermissionManageMenuDo = menuRepository.save(accountPermissionManageMenuDo);
 
         //create 'permission manage' menu
-        MenuDaoEntity permissionManageMenuDaoEntity = new MenuDaoEntity();
-        permissionManageMenuDaoEntity.setParentId(accountPermissionManageMenuDaoEntity.getId());
-        permissionManageMenuDaoEntity.setName("權限管理");
-        permissionManageMenuDaoEntity.setPath("/home/permissionList");
-        permissionManageMenuDaoEntity = menuRepository.save(permissionManageMenuDaoEntity);
+        MenuDo permissionManageMenuDo = new MenuDo();
+        permissionManageMenuDo.setParentId(accountPermissionManageMenuDo.getId());
+        permissionManageMenuDo.setName("權限管理");
+        permissionManageMenuDo.setPath("/home/permissionList");
+        permissionManageMenuDo = menuRepository.save(permissionManageMenuDo);
 
         //add 'admin' role in 'permission manage' menu
-        MenuRoleDaoEntity permissionMenuRoleDaoEntity = new MenuRoleDaoEntity();
-        permissionMenuRoleDaoEntity.setMenuId(permissionManageMenuDaoEntity.getId());
-        permissionMenuRoleDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        menuRoleRepository.save(permissionMenuRoleDaoEntity);
+        MenuRoleDo permissionMenuRoleDo = new MenuRoleDo();
+        permissionMenuRoleDo.setMenuId(permissionManageMenuDo.getId());
+        permissionMenuRoleDo.setRoleId(adminRoleDo.getId());
+        menuRoleRepository.save(permissionMenuRoleDo);
 
         //create 'role manage' menu
-        MenuDaoEntity roleManageMenuDaoEntity = new MenuDaoEntity();
-        roleManageMenuDaoEntity.setParentId(accountPermissionManageMenuDaoEntity.getId());
-        roleManageMenuDaoEntity.setName("角色管理");
-        roleManageMenuDaoEntity.setPath("/home/roleList");
-        roleManageMenuDaoEntity = menuRepository.save(roleManageMenuDaoEntity);
+        MenuDo roleManageMenuDo = new MenuDo();
+        roleManageMenuDo.setParentId(accountPermissionManageMenuDo.getId());
+        roleManageMenuDo.setName("角色管理");
+        roleManageMenuDo.setPath("/home/roleList");
+        roleManageMenuDo = menuRepository.save(roleManageMenuDo);
 
         //add 'admin' role in 'role manage' menu
-        MenuRoleDaoEntity roleMenuRoleDaoEntity = new MenuRoleDaoEntity();
-        roleMenuRoleDaoEntity.setMenuId(roleManageMenuDaoEntity.getId());
-        roleMenuRoleDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        menuRoleRepository.save(roleMenuRoleDaoEntity);
+        MenuRoleDo roleMenuRoleDo = new MenuRoleDo();
+        roleMenuRoleDo.setMenuId(roleManageMenuDo.getId());
+        roleMenuRoleDo.setRoleId(adminRoleDo.getId());
+        menuRoleRepository.save(roleMenuRoleDo);
 
         //create 'menu manage' menu
-        MenuDaoEntity menuManageMenuDaoEntity = new MenuDaoEntity();
-        menuManageMenuDaoEntity.setParentId(accountPermissionManageMenuDaoEntity.getId());
-        menuManageMenuDaoEntity.setName("選單管理");
-        menuManageMenuDaoEntity.setPath("/home/menuList");
-        menuManageMenuDaoEntity = menuRepository.save(menuManageMenuDaoEntity);
+        MenuDo menuManageMenuDo = new MenuDo();
+        menuManageMenuDo.setParentId(accountPermissionManageMenuDo.getId());
+        menuManageMenuDo.setName("選單管理");
+        menuManageMenuDo.setPath("/home/menuList");
+        menuManageMenuDo = menuRepository.save(menuManageMenuDo);
 
         //add 'admin' role in 'menu manage' menu
-        MenuRoleDaoEntity menuMenuRoleDaoEntity = new MenuRoleDaoEntity();
-        menuMenuRoleDaoEntity.setMenuId(menuManageMenuDaoEntity.getId());
-        menuMenuRoleDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        menuRoleRepository.save(menuMenuRoleDaoEntity);
+        MenuRoleDo menuMenuRoleDo = new MenuRoleDo();
+        menuMenuRoleDo.setMenuId(menuManageMenuDo.getId());
+        menuMenuRoleDo.setRoleId(adminRoleDo.getId());
+        menuRoleRepository.save(menuMenuRoleDo);
 
         //create 'account manage' menu
-        MenuDaoEntity accountManageMenuDaoEntity = new MenuDaoEntity();
-        accountManageMenuDaoEntity.setParentId(accountPermissionManageMenuDaoEntity.getId());
-        accountManageMenuDaoEntity.setName("帳號管理");
-        accountManageMenuDaoEntity.setPath("/home/accountList");
-        accountManageMenuDaoEntity = menuRepository.save(accountManageMenuDaoEntity);
+        MenuDo accountManageMenuDo = new MenuDo();
+        accountManageMenuDo.setParentId(accountPermissionManageMenuDo.getId());
+        accountManageMenuDo.setName("帳號管理");
+        accountManageMenuDo.setPath("/home/accountList");
+        accountManageMenuDo = menuRepository.save(accountManageMenuDo);
 
         //add 'admin' role in 'menu manage' menu
-        MenuRoleDaoEntity accountMenuRoleDaoEntity = new MenuRoleDaoEntity();
-        accountMenuRoleDaoEntity.setMenuId(accountManageMenuDaoEntity.getId());
-        accountMenuRoleDaoEntity.setRoleId(adminRoleDaoEntity.getId());
-        menuRoleRepository.save(accountMenuRoleDaoEntity);
+        MenuRoleDo accountMenuRoleDo = new MenuRoleDo();
+        accountMenuRoleDo.setMenuId(accountManageMenuDo.getId());
+        accountMenuRoleDo.setRoleId(adminRoleDo.getId());
+        menuRoleRepository.save(accountMenuRoleDo);
 
     }
 }

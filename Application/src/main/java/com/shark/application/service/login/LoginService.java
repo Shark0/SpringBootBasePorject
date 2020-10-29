@@ -1,80 +1,78 @@
 package com.shark.application.service.login;
 
-import com.google.common.collect.Lists;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.dto.login.LoginDtoEntity;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.account.AccountRepository;
-import com.shark.application.repository.account.dao.AccountDaoEntity;
 import com.shark.application.configuration.security.SecurityConfiguration;
+import com.shark.application.controller.auth.pojo.LoginDo;
+import com.shark.application.controller.auth.pojo.LoginDto;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class LoginService extends BaseQueryDataService<LoginDtoEntity, LoginDtoEntity> {
+public class LoginService extends BaseQueryDataService<LoginDo, LoginDto, LoginDto> {
 
-
-    public static final String INPUT_ACCOUNT = "account";
-    public static final String INPUT_PASSWORD = "password";
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ACCOUNT, INPUT_PASSWORD);
+    protected LoginDto process(AuthAccountDo authAccountDo, LoginDo loginDo) throws Exception {
+        AccountDo accountDo = findAccount(loginDo);
+        String accessToken = generateAccessToken(accountDo);
+        String refreshToken = generateRefreshToken(accountDo);
+        saveAccount(accountDo, accessToken, refreshToken);
+        LoginDto loginDto = LoginDto.builder().accessToken(accessToken).refreshToken(refreshToken).accountName(accountDo.getName()).build();
+        return loginDto;
     }
 
-    @Override
-    protected LoginDtoEntity dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
-        String account = parameters.get(INPUT_ACCOUNT);
-        String password = parameters.get(INPUT_PASSWORD);
-        AccountDaoEntity accountDaoEntity = accountRepository.findByAccount(account);
-        if(accountDaoEntity == null){
-            ResponseException exception = new ResponseException();
-            exception.setReturnCode(-1);
-            exception.setReturnMessage("Account doesn't exist");
+    private AccountDo findAccount(LoginDo loginDo) {
+        AccountDo accountDo = accountRepository.findByAccount(loginDo.getAccount());
+        if (accountDo == null) {
+            WarningException exception = new WarningException("account.does.not.exist");
             throw exception;
         }
-        if(!password.equalsIgnoreCase(accountDaoEntity.getPassword())) {
-            ResponseException exception = new ResponseException();
-            exception.setReturnCode(-2);
-            exception.setReturnMessage("Password error");
-            throw exception;
+        String password = loginDo.getPassword();
+        if (!bCryptPasswordEncoder.matches(password, accountDo.getPassword())) {
+            throw new WarningException("password.error");
         }
+        return accountDo;
+    }
 
-        LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
-        memberDtoEntity.setAccountName(accountDaoEntity.getName());
-        String accessToken = SecurityConfiguration.ACCESS_PREFIX + Jwts.builder()
-                .setSubject(String.valueOf(accountDaoEntity.getId()))
+    private String generateAccessToken(AccountDo accountDo) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(accountDo.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.ACCESS_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.ACCESS_SECRET.getBytes())
                 .compact();
-        memberDtoEntity.setAccessToken(accessToken);
-        String refreshToken = SecurityConfiguration.REFRESH_PREFIX + Jwts.builder()
-                .setSubject(String.valueOf(accountDaoEntity.getId()))
+    }
+
+    private String generateRefreshToken(AccountDo accountDo) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(accountDo.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.REFRESH_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.REFRESH_SECRET.getBytes())
                 .compact();
-        memberDtoEntity.setRefreshToken(refreshToken);
+    }
 
-        accountDaoEntity.setAccessToken(accessToken);
-        accountDaoEntity.setRefreshToken(refreshToken);
-        accountRepository.save(accountDaoEntity);
-        return memberDtoEntity;
+    private void saveAccount(AccountDo accountDo, String accessToken, String refreshToken) {
+        accountDo.setAccessToken(accessToken);
+        accountDo.setRefreshToken(refreshToken);
+        accountRepository.save(accountDo);
     }
 
     @Override
-    protected ResponseDataEntity<LoginDtoEntity> generateResultData(String accountId, LoginDtoEntity loginDtoEntity) {
-        ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
-        responseDataEntity.setData(loginDtoEntity);
+    protected ResponseDto<LoginDto> generateResult(AuthAccountDo authAccountDo, LoginDto loginDto) {
+        ResponseDto<LoginDto> responseDataEntity = new ResponseDto<>();
+        responseDataEntity.setResultData(loginDto);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }

@@ -1,71 +1,54 @@
 package com.shark.application.service.role;
 
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
-import com.shark.application.repository.role.RolePermissionRepository;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
-import com.shark.application.repository.role.dao.RolePermissionDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.controller.role.pojo.RoleDio;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
+import com.shark.application.dao.repository.role.RolePermissionRepository;
+import com.shark.application.dao.repository.role.RoleRepository;
+import com.shark.application.dao.repository.role.pojo.RoleDo;
+import com.shark.application.dao.repository.role.pojo.RolePermissionDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
-import com.shark.application.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.shark.application.util.ListUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class AddRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoEntity> {
+public class AddRoleService extends BaseQueryDataService<RoleDio, RoleDo, RoleDo> {
 
-    public static final String INPUT_NAME = "name";
-    public static final String INPUT_PERMISSION_ID_LIST_JSON = "permissionIdListJson";
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final RolePermissionRepository rolePermissionRepository;
 
-    @Autowired
-    private RolePermissionRepository rolePermissionRepository;
-
+    @Transactional
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_NAME);
-    }
-
-    @Override
-    protected RoleDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
-        RoleDaoEntity roleDaoEntity = new RoleDaoEntity();
-        roleDaoEntity.setName(parameters.get(INPUT_NAME));
-        roleDaoEntity = roleRepository.save(roleDaoEntity);
-
-        String permissionIdListJson = parameters.get(INPUT_PERMISSION_ID_LIST_JSON);
-        Long roleId = roleDaoEntity.getId();
-        if(!StringUtil.isEmpty(permissionIdListJson)) {
-            Gson gson = new Gson();
-            List<Long> permissionIdList = gson.fromJson(permissionIdListJson, new TypeToken<List<Long>>(){}.getType());
-            for(Long permissionId: permissionIdList) {
-                PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(permissionId).get();
-                if(permissionDaoEntity != null) {
-                    RolePermissionDaoEntity rolePermissionDaoEntity = new RolePermissionDaoEntity();
-                    rolePermissionDaoEntity.setRoleId(roleId);
-                    rolePermissionDaoEntity.setPermissionId(permissionId);
-                    rolePermissionRepository.save(rolePermissionDaoEntity);
-                }
+    protected RoleDo process(AuthAccountDo authAccountDo, RoleDio roleDio) throws Exception {
+        RoleDo roleDo = new RoleDo();
+        roleDo.setName(roleDio.getName());
+        roleDo = roleRepository.save(roleDo);
+        if(!ListUtil.isEmpty(roleDio.getPermissionIdList())) {
+            for(Long permissionId: roleDio.getPermissionIdList()) {
+                PermissionDo permissionDo = permissionRepository.findById(permissionId)
+                        .orElseThrow(() -> new WarningException("permission.does.not.exist"));
+                RolePermissionDo rolePermissionDo = new RolePermissionDo();
+                rolePermissionDo.setRoleId(roleDo.getId());
+                rolePermissionDo.setPermissionId(permissionDo.getId());
+                rolePermissionRepository.save(rolePermissionDo);
             }
         }
-        return roleDaoEntity;
+        return roleDo;
     }
 
     @Override
-    protected ResponseDataEntity<RoleDaoEntity> generateResultData(String accountId, RoleDaoEntity roleDaoEntity) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(roleDaoEntity);
+    protected ResponseDto<RoleDo> generateResult(AuthAccountDo authAccountDo, RoleDo roleDo) {
+        ResponseDto responseDataEntity = new ResponseDto();
+        responseDataEntity.setResultData(roleDo);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }

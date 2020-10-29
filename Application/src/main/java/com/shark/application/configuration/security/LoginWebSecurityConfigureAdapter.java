@@ -1,7 +1,9 @@
 package com.shark.application.configuration.security;
 
 
-import com.shark.application.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,13 +16,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class LoginWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final AccountRepository accountRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -34,16 +37,16 @@ public class LoginWebSecurityConfigureAdapter extends WebSecurityConfigurerAdapt
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/login").permitAll()
-                .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/register").permitAll()
-                .antMatchers(HttpMethod.POST, SecurityConfiguration.LOGIN_URL + "/refresh").permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConfiguration.AUTH_URL + "/login").permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConfiguration.AUTH_URL + "/register").permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConfiguration.AUTH_URL + "/refresh").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
                 .antMatchers(HttpMethod.GET, "/swagger-resources/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/v2/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new LoginAuthorizationFilter(authenticationManager(), permissionRepository))
+                .addFilter(new LoginAuthorizationFilter(authenticationManager(), accountRepository, permissionRepository))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }

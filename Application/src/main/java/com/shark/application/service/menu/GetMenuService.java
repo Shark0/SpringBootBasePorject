@@ -1,69 +1,59 @@
 package com.shark.application.service.menu;
 
-import com.google.common.collect.Lists;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.dto.menu.MenuDtoEntity;
-import com.shark.application.repository.menu.MenuRepository;
-import com.shark.application.repository.menu.dao.MenuDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.menu.MenuRepository;
+import com.shark.application.dao.repository.menu.pojo.MenuDo;
+import com.shark.application.dto.menu.MenuDto;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class GetMenuService extends BaseQueryDataService<MenuDtoEntity, MenuDtoEntity> {
+public class GetMenuService extends BaseQueryDataService<Long, MenuDto, MenuDto> {
 
-    public static final String INPUT_ID = "id";
-
-    @Autowired
-    private MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
+    protected MenuDto process(AuthAccountDo authAccountDo, Long menuId) throws Exception {
+        List<MenuDo> menuDoList = menuRepository.findByMenuIdOrParentId(menuId);
+        return generateMenu(menuId, menuDoList);
     }
 
-    @Override
-    protected MenuDtoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
-        //find menu list
-        String id = parameters.get(INPUT_ID);
-        List<MenuDaoEntity> menuDaoEntityList = menuRepository.findByMenuIdOrParentId(Long.valueOf(id));
-        return generateMenu(Long.valueOf(id), menuDaoEntityList);
-    }
-
-    private MenuDtoEntity generateMenu(long id, List<MenuDaoEntity> menuDaoEntityList) {
-        MenuDtoEntity menu = null;
-        HashMap<Long, MenuDtoEntity> hashMap = new HashMap<>();
-        //push menu to hash map
-        for(MenuDaoEntity menuDaoEntity: menuDaoEntityList) {
-            MenuDtoEntity menuDtoEntity = new MenuDtoEntity(menuDaoEntity);
-            hashMap.put(menuDaoEntity.getId(), menuDtoEntity);
-            if(menuDtoEntity.getId() == id) {
-                menu = menuDtoEntity;
+    private MenuDto generateMenu(long id, List<MenuDo> menuDoList) {
+        MenuDto menu = null;
+        HashMap<Long, MenuDto> hashMap = new HashMap<>();
+        for(MenuDo menuDaoEntity: menuDoList) {
+            MenuDto menuDto = new MenuDto(menuDaoEntity);
+            hashMap.put(menuDaoEntity.getId(), menuDto);
+            if(menuDto.getId() == id) {
+                menu = menuDto;
             }
         }
         //add menu to parent
         for (Long key : hashMap.keySet()) {
-            MenuDtoEntity menuDtoEntity = hashMap.get(key);
-            if (menuDtoEntity.getParentId() != null) {
-                MenuDtoEntity parent = hashMap.get(menuDtoEntity.getParentId());
+            MenuDto menuDto = hashMap.get(key);
+            if (menuDto.getParentId() != null) {
+                MenuDto parent = hashMap.get(menuDto.getParentId());
                 if (parent != null) {
-                    List<MenuDtoEntity> subMenuList = parent.getSubMenuList();
+                    List<MenuDto> subMenuList = parent.getSubMenuList();
                     if (subMenuList == null) {
                         subMenuList = new ArrayList<>();
                         parent.setSubMenuList(subMenuList);
                     }
-                    subMenuList.add(menuDtoEntity);
+                    subMenuList.add(menuDto);
                 }
             }
         }
         //sort sub menu
         for (Long key: hashMap.keySet()) {
-            MenuDtoEntity menuDtoEntity = hashMap.get(key);
-            List<MenuDtoEntity> subMenuList = menuDtoEntity.getSubMenuList();
+            MenuDto menuDto = hashMap.get(key);
+            List<MenuDto> subMenuList = menuDto.getSubMenuList();
             if(subMenuList != null) {
                 subMenuList.sort((o1, o2) -> {
                     if (o1.getSort() < o2.getSort()) {
@@ -80,9 +70,9 @@ public class GetMenuService extends BaseQueryDataService<MenuDtoEntity, MenuDtoE
     }
 
     @Override
-    protected ResponseDataEntity<MenuDtoEntity> generateResultData(String accountId, MenuDtoEntity data) {
-        ResponseDataEntity<MenuDtoEntity> responseDataEntity = new ResponseDataEntity<>();
-        responseDataEntity.setData(data);
+    protected ResponseDto<MenuDto> generateResult(AuthAccountDo authAccountDo, MenuDto menuDto) {
+        ResponseDto<MenuDto> responseDataEntity = new ResponseDto<>();
+        responseDataEntity.setResultData(menuDto);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }

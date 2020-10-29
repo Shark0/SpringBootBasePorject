@@ -1,38 +1,29 @@
 package com.shark.application.service.role;
 
-import com.google.common.collect.Lists;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.role.RoleRepository;
+import com.shark.application.dao.repository.role.pojo.RoleDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class GetRoleService extends BaseQueryDataService<RoleDaoEntity, RoleDaoEntity> {
+public class GetRoleService extends BaseQueryDataService<Long, RoleDo, RoleDo> {
 
-    public static final String INPUT_ID = "id";
-
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
+    protected RoleDo process(AuthAccountDo authAccountDo, Long roleId) throws Exception {
+        return roleRepository.findById(roleId).orElseThrow(() -> new WarningException("role.does.not.exist"));
     }
 
     @Override
-    protected RoleDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
-        return roleRepository.findById(Long.valueOf(parameters.get(INPUT_ID))).get();
-    }
-
-    @Override
-    protected ResponseDataEntity<RoleDaoEntity> generateResultData(String accountId, RoleDaoEntity groupDaoEntityList) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(groupDaoEntityList);
+    protected ResponseDto<RoleDo> generateResult(AuthAccountDo authAccountDo, RoleDo roleDo) {
+        ResponseDto<RoleDo> responseDataEntity = new ResponseDto();
+        responseDataEntity.setResultData(roleDo);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }

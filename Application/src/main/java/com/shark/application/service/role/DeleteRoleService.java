@@ -1,35 +1,23 @@
 package com.shark.application.service.role;
 
-import com.shark.application.repository.role.RoleRepository;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.role.RolePermissionRepository;
+import com.shark.application.dao.repository.role.RoleRepository;
 import com.shark.application.service.BaseResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-@Transactional
+@RequiredArgsConstructor
 @Service
-public class DeleteRoleService extends BaseResponseService {
+public class DeleteRoleService extends BaseResponseService<Long> {
 
-    public static final String INPUT_ID = "id";
-
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RolePermissionRepository rolePermissionRepository;
+    private final RoleRepository roleRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        List<String> list = new ArrayList<>();
-        list.add(INPUT_ID);
-        return list;
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        long id = Long.valueOf(parameters.get(INPUT_ID));
-        roleRepository.deleteById(id);
+    protected Void process(AuthAccountDo authAccountDo, Long roleId) throws Exception {
+        rolePermissionRepository.deleteByRoleId(roleId);
+        roleRepository.deleteById(roleId);
         return null;
     }
 }

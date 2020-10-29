@@ -1,38 +1,30 @@
 package com.shark.application.service.permission;
 
-import com.google.common.collect.Lists;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class GetPermissionService extends BaseQueryDataService<PermissionDaoEntity, PermissionDaoEntity> {
+public class GetPermissionService extends BaseQueryDataService<Long, PermissionDo, PermissionDo> {
 
-    public static final String INPUT_ID = "id";
-
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private final PermissionRepository permissionRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
+    protected PermissionDo process(AuthAccountDo authAccountDo, Long permissionId) throws Exception {
+        return permissionRepository.findById(permissionId)
+                .orElseThrow(() -> new WarningException("permission.does.not.exist"));
     }
 
     @Override
-    protected PermissionDaoEntity dataAccess(String accountId, HashMap<String, String> parameters) {
-        return permissionRepository.findById(Long.valueOf(parameters.get(INPUT_ID))).get();
-    }
-
-    @Override
-    protected ResponseDataEntity<PermissionDaoEntity> generateResultData(String accountId, PermissionDaoEntity permissionDaoEntity) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(permissionDaoEntity);
+    protected ResponseDto<PermissionDo> generateResult(AuthAccountDo authAccountDo, PermissionDo permissionDo) {
+        ResponseDto responseDataEntity = new ResponseDto();
+        responseDataEntity.setResultData(permissionDo);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }

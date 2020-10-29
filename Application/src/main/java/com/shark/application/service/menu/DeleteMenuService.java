@@ -1,31 +1,25 @@
 package com.shark.application.service.menu;
 
-import com.google.common.collect.Lists;
-import com.shark.application.repository.menu.MenuRepository;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.menu.MenuRepository;
+import com.shark.application.dao.repository.menu.MenuRoleRepository;
 import com.shark.application.service.BaseResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class DeleteMenuService extends BaseResponseService {
+public class DeleteMenuService extends BaseResponseService<Long> {
 
-    public static final String INPUT_ID = "id";
+    private final MenuRoleRepository menuRoleRepository;
+    private final MenuRepository menuRepository;
 
-    @Autowired
-    private MenuRepository menuRepository;
-
+    @Transactional
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        long id = Long.valueOf(parameters.get(INPUT_ID));
-        menuRepository.deleteById(id);
+    protected Void process(AuthAccountDo authAccountDo, Long menuId) throws Exception {
+        menuRoleRepository.deleteByMenuId(menuId);
+        menuRepository.deleteById(menuId);
         return null;
     }
 }

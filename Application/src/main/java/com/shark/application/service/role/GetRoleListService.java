@@ -1,36 +1,31 @@
 package com.shark.application.service.role;
 
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.role.RoleRepository;
+import com.shark.application.dao.repository.role.pojo.RoleDo;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class GetRoleListService extends BaseQueryDataService<List<RoleDaoEntity>, List<RoleDaoEntity>> {
+public class GetRoleListService extends BaseQueryDataService<Void, List<RoleDo>, List<RoleDo>> {
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Override
-    protected List<String> generateCheckKeyList() {
-        return null;
-    }
+    private final RoleRepository roleRepository;
 
     @Override
-    protected List<RoleDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
+    protected List<RoleDo> process(AuthAccountDo authAccountDo, Void unused) throws Exception {
         return roleRepository.findAll();
     }
 
     @Override
-    protected ResponseDataEntity<List<RoleDaoEntity>> generateResultData(String accountId, List<RoleDaoEntity> groupDaoEntityList) {
-        ResponseDataEntity responseDataEntity = new ResponseDataEntity();
-        responseDataEntity.setData(groupDaoEntityList);
-        responseDataEntity.setReturnCode(1);
-        return responseDataEntity;
+    protected ResponseDto<List<RoleDo>> generateResult(AuthAccountDo authAccountDo, List<RoleDo> roleDoList) {
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setResultData(roleDoList);
+        responseDto.setReturnCode(1);
+        return responseDto;
     }
 }

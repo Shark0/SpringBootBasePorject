@@ -1,59 +1,41 @@
 package com.shark.application.service.role;
 
-import com.google.common.collect.Lists;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.role.RolePermissionRepository;
-import com.shark.application.repository.role.RoleRepository;
-import com.shark.application.repository.role.dao.RoleDaoEntity;
-import com.shark.application.repository.role.dao.RolePermissionDaoEntity;
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.role.pojo.RolePermissionDio;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
+import com.shark.application.dao.repository.role.RolePermissionRepository;
+import com.shark.application.dao.repository.role.RoleRepository;
+import com.shark.application.dao.repository.role.pojo.RoleDo;
+import com.shark.application.dao.repository.role.pojo.RolePermissionDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
 @Transactional
-public class AddRolePermissionService extends BaseResponseService {
+public class AddRolePermissionService extends BaseResponseService<RolePermissionDio> {
 
-    public static final String INPUT_ROLE_ID = "roleId";
-    public static final String INPUT_PERMISSION_ID = "permissionId";
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
-    @Autowired
-    private PermissionRepository permissionRepository;
-
-    @Autowired
-    private RolePermissionRepository rolePermissionRepository;
+    private final RolePermissionRepository rolePermissionRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ROLE_ID, INPUT_PERMISSION_ID);
-    }
+    protected Void process(AuthAccountDo authAccountDo, RolePermissionDio rolePermissionDio) throws Exception {
+        RoleDo roleDaoEntity = roleRepository.findById(rolePermissionDio.getRoleId())
+                .orElseThrow(() -> new WarningException("role.does.not.exist"));
+        PermissionDo permissionDo = permissionRepository.findById(rolePermissionDio.getPermissionId())
+                .orElseThrow(() -> new WarningException("permission.does.not.exist"));
 
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        long roleId = Long.valueOf(parameters.get(INPUT_ROLE_ID));
-        long permissionId = Long.valueOf(parameters.get(INPUT_PERMISSION_ID));
-        RoleDaoEntity roleDaoEntity = roleRepository.findById(roleId).get();
-        if(roleDaoEntity == null) {
-            throw new ResponseException(-1, "Role doesn't exist");
-        }
-
-        PermissionDaoEntity permissionDaoEntity = permissionRepository.findById(permissionId).get();
-        if(permissionDaoEntity == null) {
-            throw new ResponseException(-1, "Permission doesn't exist");
-        }
-        RolePermissionDaoEntity rolePermissionDaoEntity = new RolePermissionDaoEntity();
-        rolePermissionDaoEntity.setRoleId(roleId);
-        rolePermissionDaoEntity.setPermissionId(permissionId);
-        rolePermissionRepository.save(rolePermissionDaoEntity);
+        RolePermissionDo rolePermissionDo = new RolePermissionDo();
+        rolePermissionDo.setRoleId(roleDaoEntity.getId());
+        rolePermissionDo.setPermissionId(permissionDo.getId());
+        rolePermissionRepository.save(rolePermissionDo);
         return null;
     }
 }

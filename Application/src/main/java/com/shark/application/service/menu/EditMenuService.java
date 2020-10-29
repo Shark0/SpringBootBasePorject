@@ -1,70 +1,40 @@
 package com.shark.application.service.menu;
 
-import com.google.common.collect.Lists;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.menu.MenuRepository;
-import com.shark.application.repository.menu.dao.MenuDaoEntity;
+import com.shark.application.controller.menu.pojo.MenuEditDio;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.menu.MenuRepository;
+import com.shark.application.dao.repository.menu.pojo.MenuDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseResponseService;
 import com.shark.application.util.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class EditMenuService extends BaseResponseService {
+public class EditMenuService extends BaseResponseService<MenuEditDio> {
 
-    public static final String INPUT_ID = "id";
-
-    public static final String INPUT_NAME = "name";
-
-    public static final String INPUT_ICON_URL = "iconUrl";
-
-    public static final String INPUT_PATH = "path";
-
-    public static final String INPUT_PARENT_ID = "parentId";
-
-    public static final String INPUT_SORT = "sort";
-
-    @Autowired
-    private MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ID);
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        String id = parameters.get(INPUT_ID);
-        String name = parameters.get(INPUT_NAME);
-        String iconUrl = parameters.get(INPUT_ICON_URL);
-        String path = parameters.get(INPUT_PATH);
-        String parentId = parameters.get(INPUT_PARENT_ID);
-        String sort = parameters.get(INPUT_SORT);
-        MenuDaoEntity menuDaoEntity = menuRepository.findById(Long.valueOf(id)).get();
-        if(menuDaoEntity == null) {
-            throw new ResponseException(-1, "Menu is not exist");
+    protected Void process(AuthAccountDo authAccountDo, MenuEditDio menuEditDio) throws Exception {
+        MenuDo menuDo = menuRepository.findById(menuEditDio.getId()).orElseThrow(() -> new WarningException("menu.does.not.exist"));
+        if (!StringUtil.isEmpty(menuEditDio.getName())) {
+            menuDo.setName(menuEditDio.getName());
         }
-        if(!StringUtil.isEmpty(name)) {
-            menuDaoEntity.setName(name);
+        if (!StringUtil.isEmpty(menuEditDio.getIconUrl())) {
+            menuDo.setIconUrl(menuEditDio.getIconUrl());
         }
-        if(!StringUtil.isEmpty(iconUrl)) {
-            menuDaoEntity.setIconUrl(iconUrl);
+        if (!StringUtil.isEmpty(menuEditDio.getPath())) {
+            menuDo.setPath(menuEditDio.getPath());
         }
-        if(!StringUtil.isEmpty(path)) {
-            menuDaoEntity.setPath(path);
+        if (menuEditDio.getParentId() != null) {
+            menuDo.setParentId(menuEditDio.getParentId());
         }
-        if(!StringUtil.isEmpty(parentId)) {
-            menuDaoEntity.setParentId(Long.valueOf(parentId));
+        if (menuEditDio.getSort() != null) {
+            menuDo.setSort(menuEditDio.getSort());
         }
-        if(!StringUtil.isEmpty(sort)) {
-            menuDaoEntity.setSort(Double.valueOf(sort));
-        }
-        menuRepository.save(menuDaoEntity);
+        menuRepository.save(menuDo);
         return null;
     }
-
 }

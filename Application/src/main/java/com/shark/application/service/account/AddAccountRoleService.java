@@ -1,35 +1,25 @@
 package com.shark.application.service.account;
 
-import com.google.common.collect.Lists;
-import com.shark.application.repository.account.AccountRoleRepository;
-import com.shark.application.repository.account.dao.AccountRoleDaoEntity;
+import com.shark.application.controller.account.pojo.AccountRoleDio;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRoleRepository;
+import com.shark.application.dao.repository.account.pojo.AccountRoleDo;
 import com.shark.application.service.BaseResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class AddAccountRoleService extends BaseResponseService {
+public class AddAccountRoleService extends BaseResponseService<AccountRoleDio> {
 
-    public static final String INPUT_ACCOUNT_ID = "accountId";
-    public static final String INPUT_ROLE_ID = "roleId";
-
-    @Autowired
-    private AccountRoleRepository accountGroupRepository;
+    private final AccountRoleRepository accountRoleRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return Lists.newArrayList(INPUT_ACCOUNT_ID, INPUT_ROLE_ID);
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        AccountRoleDaoEntity entity = new AccountRoleDaoEntity();
-        entity.setAccountId(Long.valueOf(parameters.get(INPUT_ACCOUNT_ID)));
-        entity.setRoleId(Long.valueOf(parameters.get(INPUT_ROLE_ID)));
-        accountGroupRepository.save(entity);
+    protected Void process(AuthAccountDo authAccountDo, AccountRoleDio accountRoleDio) throws Exception {
+        AccountRoleDo accountRoleDo = new AccountRoleDo();
+        accountRoleDo.setAccountId(accountRoleDio.getAccountId());
+        accountRoleDo.setRoleId(accountRoleDio.getRuleId());
+        accountRoleRepository.save(accountRoleDo);
         return null;
     }
 }

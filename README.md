@@ -20,10 +20,10 @@ http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html
 https://zh.wikipedia.org/wiki/%E4%BB%A5%E8%A7%92%E8%89%B2%E7%82%BA%E5%9F%BA%E7%A4%8E%E7%9A%84%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6
 
 ### 開始
-#### 先在本機localhost設定好測試用的Mysql連線資訊
+#### 先在本機localhost設定好測試用的Postgres連線資訊
 1. 帳號：root 
 2. 密碼：root 
-3. Schema: Base
+3. database: base
 
 
 #### 建制Demo資料
@@ -34,6 +34,3 @@ https://zh.wikipedia.org/wiki/%E4%BB%A5%E8%A7%92%E8%89%B2%E7%82%BA%E5%9F%BA%E7%A
 #### API文件
 啟動Application模組就可觀看Swagger API文件 http://localhost:8081/swagger-ui.html#/ 
 可以透過文件來新增帳號，透過root帳號來設定選單、角色、與權限，也可賦予新帳號admin角色。P.S. 登入API跟註冊API不需要在Swagger文件上輸入JWT
-
-#### 前端Angular Demo專案
-Github路徑 https://github.com/Shark0/AngularBaseProject

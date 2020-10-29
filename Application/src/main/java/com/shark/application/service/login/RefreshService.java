@@ -1,88 +1,86 @@
 package com.shark.application.service.login;
 
 import com.shark.application.configuration.security.SecurityConfiguration;
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.dto.login.LoginDtoEntity;
-import com.shark.application.exception.ResponseException;
-import com.shark.application.repository.account.AccountRepository;
-import com.shark.application.repository.account.dao.AccountDaoEntity;
+import com.shark.application.controller.auth.pojo.LoginDto;
+import com.shark.application.controller.auth.pojo.RefreshDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.exception.WarningException;
 import com.shark.application.service.BaseQueryDataService;
 import com.shark.application.util.StringUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class RefreshService extends BaseQueryDataService<LoginDtoEntity, LoginDtoEntity> {
+public class RefreshService extends BaseQueryDataService<RefreshDo, LoginDto, LoginDto> {
 
-    public static final String INPUT_ACCESS_TOKEN = "accessToken";
-    public static final String INPUT_REFRESH_TOKEN = "refreshToken";
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        List<String> list = new ArrayList<>();
-        list.add(INPUT_ACCESS_TOKEN);
-        list.add(INPUT_REFRESH_TOKEN);
-        return list;
+    protected LoginDto process(AuthAccountDo authAccountDo, RefreshDo refreshDo) throws Exception {
+        AccountDo accountDo = findAccount(refreshDo);
+        String accessToken = generateAccessToken(accountDo);
+        String refreshToken = generateRefreshToken(accountDo);
+        saveAccount(accountDo, accessToken, refreshToken);
+        LoginDto loginDto = LoginDto.builder().accessToken(accessToken).refreshToken(refreshToken).accountName(accountDo.getName()).build();
+        return loginDto;
     }
 
-    @Override
-    protected LoginDtoEntity dataAccess(String accountId, HashMap<String, String> parameters) throws Exception {
-        String accessToken = parameters.get(INPUT_ACCESS_TOKEN);
-        String refreshToken = parameters.get(INPUT_REFRESH_TOKEN);
-        String account = null;
+    private AccountDo findAccount(RefreshDo refreshDo) {
+        String accountId = null;
         try {
-            account = Jwts.parser()
+            accountId = Jwts.parser()
                     .setSigningKey(SecurityConfiguration.REFRESH_SECRET.getBytes())
-                    .parseClaimsJws(refreshToken.replace(SecurityConfiguration.REFRESH_PREFIX, ""))
+                    .parseClaimsJws(refreshDo.getRefreshToken().replace(SecurityConfiguration.REFRESH_PREFIX, ""))
                     .getBody()
                     .getSubject();
         } catch (Exception e) {
-            throw new ResponseException(-1, "Refresh Token Parser錯誤");
-        }
-        System.out.println("account: " + account);
-        AccountDaoEntity accountDaoEntity =  accountRepository.findById(Long.valueOf(account)).get();
-        String accountAccessToken = accountDaoEntity.getAccessToken();
-        if(StringUtil.isEmpty(accountAccessToken) || !accountAccessToken.equalsIgnoreCase(accessToken)) {
-            throw new ResponseException(-2, "Access Token 不一致");
+            throw new WarningException("parse.refresh.token.error");
         }
 
-        LoginDtoEntity memberDtoEntity = new LoginDtoEntity();
-        memberDtoEntity.setAccountName(accountDaoEntity.getName());
-        accessToken = SecurityConfiguration.ACCESS_PREFIX + Jwts.builder()
-                .setSubject(String.valueOf(accountDaoEntity.getId()))
+        AccountDo accountDo =  accountRepository.findById(Long.valueOf(accountId)).get();
+        String accessToken = accountDo.getAccessToken();
+        if(StringUtil.isEmpty(accessToken) || !accessToken.equalsIgnoreCase(refreshDo.getAccessToken())) {
+            throw new WarningException("access.token.error");
+        }
+        return accountDo;
+    }
+
+    private String generateAccessToken(AccountDo accountDo) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(accountDo.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.ACCESS_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.ACCESS_SECRET.getBytes())
                 .compact();
-        memberDtoEntity.setAccessToken(accessToken);
+    }
 
-        refreshToken = SecurityConfiguration.REFRESH_PREFIX + Jwts.builder()
-                .setSubject(String.valueOf(accountDaoEntity.getId()))
+    private String generateRefreshToken(AccountDo accountDo) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(accountDo.getId()))
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConfiguration.REFRESH_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConfiguration.REFRESH_SECRET.getBytes())
                 .compact();
-        memberDtoEntity.setRefreshToken(refreshToken);
+    }
 
-        accountDaoEntity.setAccessToken(accessToken);
-        accountDaoEntity.setRefreshToken(refreshToken);
-        accountRepository.save(accountDaoEntity);
-        return memberDtoEntity;
+    private void saveAccount(AccountDo accountDo, String accessToken, String refreshToken) {
+        accountDo.setAccessToken(accessToken);
+        accountDo.setRefreshToken(refreshToken);
+        accountRepository.save(accountDo);
     }
 
     @Override
-    protected ResponseDataEntity<LoginDtoEntity> generateResultData(String accountId, LoginDtoEntity loginDtoEntity) {
-        ResponseDataEntity<LoginDtoEntity> responseDataEntity = new ResponseDataEntity<>();
+    protected ResponseDto<LoginDto> generateResult(AuthAccountDo authAccountDo, LoginDto loginDto) {
+        ResponseDto<LoginDto> responseDataEntity = new ResponseDto<>();
+        responseDataEntity.setResultData(loginDto);
         responseDataEntity.setReturnCode(1);
-        responseDataEntity.setData(loginDtoEntity);
         return responseDataEntity;
     }
 }

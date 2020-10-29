@@ -1,37 +1,25 @@
 package com.shark.application.service.account;
-import com.shark.application.repository.account.AccountRoleRepository;
-import com.shark.application.repository.account.dao.id.AccountRoleIdEntity;
+
+import com.shark.application.controller.account.pojo.AccountRoleDio;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRoleRepository;
+import com.shark.application.dao.repository.account.pojo.id.AccountRoleIdDo;
 import com.shark.application.service.BaseResponseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+@RequiredArgsConstructor
 @Service
-public class DeleteAccountRoleService extends BaseResponseService {
+public class DeleteAccountRoleService extends BaseResponseService<AccountRoleDio> {
 
-    public static final String INPUT_ACCOUNT_ID = "accountId";
-    public static final String INPUT_ROLE_ID = "roleId";
-
-    @Autowired
-    private AccountRoleRepository accountRoleRepository;
+    private final AccountRoleRepository accountRoleRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        List<String> list = new ArrayList<>();
-        list.add(INPUT_ACCOUNT_ID);
-        list.add(INPUT_ROLE_ID);
-        return list;
-    }
-
-    @Override
-    protected Void dataAccess(String accountId, HashMap<String, String> parameters) {
-        AccountRoleIdEntity accountRoleIdEntity = new AccountRoleIdEntity();
-        accountRoleIdEntity.setAccountId(Long.valueOf(parameters.get(INPUT_ACCOUNT_ID)));
-        accountRoleIdEntity.setRoleId(Long.valueOf(parameters.get(INPUT_ROLE_ID)));
-        accountRoleRepository.deleteById(accountRoleIdEntity);
+    protected Void process(AuthAccountDo authAccountDo, AccountRoleDio accountRoleDio) throws Exception {
+        AccountRoleIdDo accountRoleIdDo = new AccountRoleIdDo();
+        accountRoleIdDo.setAccountId(accountRoleDio.getAccountId());
+        accountRoleIdDo.setRoleId(accountRoleDio.getRuleId());
+        accountRoleRepository.deleteById(accountRoleIdDo);
         return null;
     }
 }

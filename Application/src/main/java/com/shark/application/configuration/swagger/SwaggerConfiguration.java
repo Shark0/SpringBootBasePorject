@@ -1,6 +1,7 @@
 package com.shark.application.configuration.swagger;
 
 import com.shark.application.configuration.security.SecurityConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -22,6 +23,9 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfiguration {
 
+    @Value("${git.commit.id:na}")
+    private String gitCommitId;
+
     @Bean
     public Docket docket() {
         List<Parameter> parameterList = new ArrayList<>();
@@ -39,8 +43,8 @@ public class SwaggerConfiguration {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Base Application")
-                .contact(new Contact("Shark", "", ""))
                 .version("v1")
+                .description("Current commit: " + gitCommitId)
                 .build();
     }
 }

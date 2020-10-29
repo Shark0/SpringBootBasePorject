@@ -6,22 +6,8 @@ public class StringUtil {
         return parameter == null || (parameter.trim().length() == 0);
     }
 
-    public static String camelToUnderline(String parameter) {
-        String underline = "_";
-        if (StringUtil.isEmpty(parameter)) {
-            return "";
-        }
-        int length = parameter.length();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            char c = parameter.charAt(i);
-            if (Character.isUpperCase(c)) {
-                stringBuilder.append(underline);
-                stringBuilder.append(Character.toLowerCase(c));
-            } else {
-                stringBuilder.append(c);
-            }
-        }
-        return stringBuilder.toString();
+    public static boolean isEmail(String email) {
+        String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        return email.matches(regex);
     }
 }

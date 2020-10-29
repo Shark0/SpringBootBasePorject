@@ -11,5 +11,5 @@ public class SecurityConfiguration {
     public static final long REFRESH_EXPIRATION_TIME = 864000000;
     public static final String REFRESH_PREFIX = "refresh_";
 
-    public static final String LOGIN_URL = "/login";
+    public static final String AUTH_URL = "/auth";
 }

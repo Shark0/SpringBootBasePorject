@@ -1,7 +1,10 @@
 package com.shark.application.configuration.security;
 
-import com.shark.application.repository.permission.PermissionRepository;
-import com.shark.application.repository.permission.dao.PermissionDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.dao.repository.account.AccountRepository;
+import com.shark.application.dao.repository.account.pojo.AccountDo;
+import com.shark.application.dao.repository.permission.PermissionRepository;
+import com.shark.application.dao.repository.permission.pojo.PermissionDo;
 import com.shark.application.util.StringUtil;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,11 +24,16 @@ import java.util.List;
 
 public class LoginAuthorizationFilter extends BasicAuthenticationFilter {
 
+    private AccountRepository accountRepository;
     private PermissionRepository permissionRepository;
 
 
-    public LoginAuthorizationFilter(AuthenticationManager authenticationManager, PermissionRepository permissionRepository) {
+    public LoginAuthorizationFilter(
+            AuthenticationManager authenticationManager,
+            AccountRepository accountRepository,
+            PermissionRepository permissionRepository) {
         super(authenticationManager);
+        this.accountRepository = accountRepository;
         this.permissionRepository = permissionRepository;
     }
 
@@ -56,12 +64,22 @@ public class LoginAuthorizationFilter extends BasicAuthenticationFilter {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         if(!StringUtil.isEmpty(account)) {
-            List<PermissionDaoEntity> permissionDaoEntityList = permissionRepository.findByAccount(account);
-            for(PermissionDaoEntity permissionDaoEntity: permissionDaoEntityList ) {
-                authorities.add(new SimpleGrantedAuthority(permissionDaoEntity.getCode()));
+            List<PermissionDo> permissionDoList = permissionRepository.findByAccount(account);
+            for(PermissionDo permissionDo : permissionDoList) {
+                authorities.add(new SimpleGrantedAuthority(permissionDo.getCode()));
             }
         }
 
-        return new UsernamePasswordAuthenticationToken(account, null, authorities);
+        AccountDo accountDo = accountRepository.findByAccount(account);
+        AuthAccountDo authAccountDo = null;
+        if(accountDo != null) {
+            authAccountDo = new AuthAccountDo();
+            authAccountDo.setAccount(accountDo.getAccount());
+            authAccountDo.setId(accountDo.getId());
+            authAccountDo.setName(accountDo.getName());
+        }
+
+
+        return new UsernamePasswordAuthenticationToken(authAccountDo, null, authorities);
     }
 }

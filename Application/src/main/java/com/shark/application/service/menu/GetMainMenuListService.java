@@ -1,38 +1,31 @@
 package com.shark.application.service.menu;
 
-import com.shark.application.dto.ResponseDataEntity;
-import com.shark.application.dto.menu.MenuDtoEntity;
-import com.shark.application.repository.menu.MenuRepository;
-import com.shark.application.repository.menu.dao.MenuDaoEntity;
+import com.shark.application.controller.pojo.AuthAccountDo;
+import com.shark.application.controller.pojo.ResponseDto;
+import com.shark.application.dao.repository.menu.MenuRepository;
+import com.shark.application.dao.repository.menu.pojo.MenuDo;
 import com.shark.application.service.BaseQueryDataService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
-public class GetMainMenuListService extends BaseQueryDataService<List<MenuDaoEntity>, List<MenuDaoEntity>> {
+public class GetMainMenuListService extends BaseQueryDataService<Void, List<MenuDo>, List<MenuDo>> {
 
-    @Autowired
-    private MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
     @Override
-    protected List<String> generateCheckKeyList() {
-        return null;
+    protected List<MenuDo> process(AuthAccountDo authAccountDo, Void unused) throws Exception {
+        return menuRepository.findMainMenu();
     }
 
     @Override
-    protected List<MenuDaoEntity> dataAccess(String accountId, HashMap<String, String> parameters) {
-        List<MenuDaoEntity> menuDaoEntityList = menuRepository.findMainMenu();
-        return menuDaoEntityList;
-    }
-
-    @Override
-    protected ResponseDataEntity<List<MenuDaoEntity>> generateResultData(String accountId, List<MenuDaoEntity> data) {
-        ResponseDataEntity<List<MenuDaoEntity>> responseDataEntity = new ResponseDataEntity<>();
-        responseDataEntity.setData(data);
+    protected ResponseDto<List<MenuDo>> generateResult(AuthAccountDo authAccountDo, List<MenuDo> menuDoList) {
+        ResponseDto<List<MenuDo>> responseDataEntity = new ResponseDto<>();
+        responseDataEntity.setResultData(menuDoList);
         responseDataEntity.setReturnCode(1);
         return responseDataEntity;
     }
